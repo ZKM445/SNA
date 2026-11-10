@@ -6044,7 +6044,7 @@ input[type="radio"] {
 <div aria-labelledby="btnLocation" class="mode-content" id="modeLocation" role="tabpanel">
 <div style="margin-top:10px;">
 <p class="sidebar-description">
-                            Location browsing is shown in the main panel. Select a community from the Yukon map or community list to view its organizations and available youth feedback.
+                            Location browsing is shown in the main panel. Select a community from the Yukon map or community list to view its organizations and available youth feedback. Organizations reported the communities they serve through the <button type="button" aria-haspopup="dialog" aria-controls="inventoryModalOverlay" style="display:inline; min-height:0; height:auto; margin:0; border:0; padding:0; background:none; color:#003a70; font:inherit; line-height:inherit; vertical-align:baseline; text-decoration:underline; cursor:pointer;" onclick="window.openSurveyModal()">survey</button>.
                         </p>
 <div aria-live="polite" class="what-heard-panel hidden sidebar-what-heard-panel" id="whatHeardPanel">
 <div class="what-heard-eyebrow">What We Heard report</div>
@@ -6121,7 +6121,8 @@ input[type="radio"] {
 <div class="legend-row"><span class="legend-line strong"></span><span class="legend-label">Strong</span></div>
 <div class="legend-row"><span class="legend-line very-strong"></span><span class="legend-label">Very strong / frequent</span></div>
 <div class="legend-row"><span class="legend-line shared-maps"></span><span class="legend-label">Shared across maps</span></div>
-<p style="margin-top:10px; margin-bottom:0;">Relationship strength was determined from the survey sent to organizations.</p>
+<p style="margin-top:10px; margin-bottom:0;">Relationship strength was determined from the <button type="button" id="surveyQuestionsToggle" aria-haspopup="dialog" aria-controls="inventoryModalOverlay" style="display:inline; min-height:0; height:auto; margin:0; border:0; padding:0; background:none; color:#003a70; font:inherit; line-height:inherit; vertical-align:baseline; text-decoration:underline; cursor:pointer;" onclick="window.openSurveyModal()">survey</button> sent to organizations.</p>
+
 </div>
 </details>
 
@@ -6276,6 +6277,22 @@ We recognize that this is only a snapshot in time of who exists and what work th
 </div>
 </div>
 </div>
+<template id="surveyReferenceQuestions">
+<strong>Reference questions asked:</strong>
+<ol style="margin:8px 0 0; padding-left:20px;">
+<li>How closely/often are the collaborations (scale 1–4)?
+<ul style="list-style:none; margin:6px 0 10px; padding-left:0;">
+<li>1 = have connection but not regular</li>
+<li>2 = regular connection</li>
+<li>3 = coordinating but not sharing resources</li>
+<li>4 = collaborating or partnering with shared decisions and resources</li>
+</ul>
+</li>
+<li style="margin-bottom:10px;">Check off the themes that help define your work:</li>
+<li>Which communities do you provide services and programming to?</li>
+</ol>
+<p style="margin:16px 0 0; color:#6b7280; font-size:12px;">Survey was sent to organizations on November 25, 2025.</p>
+</template>
 <div aria-labelledby="inventoryModalTitle" aria-modal="true" class="inventory-modal-overlay" id="inventoryModalOverlay" role="dialog">
 <div class="inventory-modal-card">
 <div class="inventory-modal-header">
@@ -7402,6 +7419,17 @@ function renderInventoryModalSection(title, value) {
     return `<section class="inventory-modal-section"><h4>${escapeHtml(title)}</h4><p>${escapeHtml(formatInventoryModalText(value))}</p></section>`;
 }
 
+window.openSurveyModal = function openSurveyModal() {
+    const overlay = document.getElementById('inventoryModalOverlay');
+    document.getElementById('inventoryModalTitle').textContent = 'Survey reference questions';
+    document.getElementById('inventoryModalBody').innerHTML = document.getElementById('surveyReferenceQuestions').innerHTML;
+    const closeButton = document.getElementById('inventoryModalClose');
+    closeButton.setAttribute('aria-label', 'Close survey reference questions');
+    overlay.style.display = '';
+    overlay.classList.add('active');
+    closeButton.focus();
+};
+
 window.openInventoryModal = function openInventoryModal() {
     const item = currentInventorySummaryItem;
     if (!item) return;
@@ -7410,6 +7438,7 @@ window.openInventoryModal = function openInventoryModal() {
     const body = document.getElementById('inventoryModalBody');
     if (!overlay || !title || !body) return;
 
+    document.getElementById('inventoryModalClose').setAttribute('aria-label', 'Close organizational summary');
     title.textContent = item.sourceTitle || 'Organizational summary';
     body.innerHTML = [
         renderInventoryModalSection('Work they do', item.work),
