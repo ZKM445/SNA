@@ -394,13 +394,6 @@
             margin: 0 0 6px 0;
         }
 
-        .map-popover-sub {
-            font-size: 11px;
-            color: #6b7280;
-            margin: 0 0 10px 0;
-            line-height: 1.35;
-        }
-
         .popover-list {
             max-height: 180px;
             overflow: auto;
@@ -425,8 +418,6 @@
             background: #f3f4f6;
             border-color: #e5e7eb;
         }
-
-        .popover-item input { margin: 0; accent-color: #0f766e; }
 
         .org-panel {
             margin-top: 10px;
@@ -5253,6 +5244,8 @@ input[type="radio"] {
     height: auto !important;
     min-height: 100svh;
     overflow: visible !important;
+    box-sizing: border-box;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
   #sidebar, #sidebar.collapsed {
     position: relative !important;
@@ -5286,9 +5279,11 @@ input[type="radio"] {
     margin: 0 !important;
     padding: 0 !important;
   }
+  #sidebar .yfned-home { min-width: 0; }
+  #sidebar .yfned-draft { flex-shrink: 0; font-size: clamp(17px, 5vw, 25px); }
   #sidebar .yfned-logo {
     width: auto !important;
-    max-width: 160px !important;
+    max-width: min(160px, 100%) !important;
     max-height: 48px !important;
   }
   #sidebar .sidebar-header h2 { font-size: 16px !important; }
@@ -5376,8 +5371,11 @@ input[type="radio"] {
   #graph-container .main-view:not(.active) { display: none !important; }
   #graph-container .main-view.active { display: block !important; }
   #graph-container #themeGraphWrap {
+    width: calc(100% - 24px) !important;
     height: clamp(440px, 74svh, 680px) !important;
     min-height: 0 !important;
+    margin-inline: 12px;
+    border-radius: 14px;
     overflow: hidden !important;
   }
   #themeGraphWrap > svg {
@@ -5477,6 +5475,7 @@ input[type="radio"] {
   #locationMain #territorialWhatHeardOverview::before { margin: -18px -16px 16px !important; }
   #locationMain .overview-report-grid { display: block !important; }
   #locationMain .map-popover { min-width: 0 !important; max-width: calc(100% - 16px) !important; }
+  #locationMain .popover-item { min-height: 44px; }
   #yukonMap .map-dot { width: 16px !important; height: 16px !important; }
   #yukonMap .map-dot::before { content: ""; position: absolute; inset: -9px; border-radius: 50%; }
   #locationMain .community-item, #locationMain .org-chip { min-height: 44px !important; }
@@ -5576,7 +5575,9 @@ input[type="radio"] {
   #mobileDetailsOverlay .selected-displayname { font-size: 16px; }
   #mobileDetailsOverlay a { overflow-wrap: anywhere; }
   #mobileDetailsOverlay .nation-links a { min-height: 44px; font-size: 14px; }
-  #mobileDetailsOverlay .nation-panel-close { display: none; }
+  #mobileDetailsOverlay .guide-service-links a { display: flex; align-items: center; min-height: 44px; }
+  #mobileDetailsOverlay .nation-panel-header,
+  #mobileDetailsOverlay #selectedNodePanel > h3 { display: none; }
   #mobileDetailsOverlay .inventory-more-btn { min-height: 44px; }
   #mobileDetailsOverlay button:focus-visible, .mobile-organization-button:focus-visible,
   #sidebar .sidebar-toggle:focus-visible { outline: 3px solid var(--bp-blue, #0b8bcc); outline-offset: 2px; }
@@ -5885,6 +5886,103 @@ input[type="radio"] {
 .employment-spoke { stroke:#a8bcc6; opacity:.5; pointer-events:none; }
 .employment-bridge-line { stroke:#003a70; stroke-dasharray:4 6; opacity:.35; }
 </style>
+<style id="community-services-and-guide">
+/* Community services and guide navigation */
+#btnYapc { --mode-color: #176b62; }
+#btnYapc.active { color: #124b45 !important; background: #e4f1ed !important; }
+#graph-container { min-width: 0; container-type: inline-size; }
+.guide-links { margin: 0; padding: 0; list-style: none; }
+.guide-links a {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  color: #003a70;
+  font-size: 13px;
+  text-decoration: none;
+}
+.guide-links a:hover { background: #eef7fb; text-decoration: underline; }
+.local-services {
+  position: absolute;
+  inset: 12px 12px auto auto;
+  z-index: 1;
+  width: clamp(124px, 40%, 224px);
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #c9dbe6;
+  border-radius: 12px;
+  background: #fff;
+  color: #253e4e;
+  box-shadow: 0 4px 14px #003a7012;
+  font-size: 12px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.local-services h4, .local-services p { margin: 0; }
+.local-services h4 { color: #003a70; font-size: 14px; }
+.local-services p { margin-top: 5px; }
+.local-services ul { margin: 5px 0 0; padding-left: 15px; }
+.local-services li + li { margin-top: 3px; }
+.local-services a { color: #003a70; }
+.nation-programs { margin: 0 0 4px 7px; font-size: 12px; color: #003a70; }
+.nation-programs summary {
+  display: list-item;
+  width: fit-content;
+  padding: 5px 8px;
+  border: 1px solid #c9dbe6;
+  border-radius: 8px;
+  background: #eef7fb;
+  font-weight: 650;
+  cursor: pointer;
+}
+.nation-programs ul { margin: 6px 0; padding-left: 16px; }
+.nation-programs a { font-weight: 600; text-decoration: underline; }
+.nation-guide-link { color: #003a70; font-size: 12px; }
+.nation-service-types { margin: 10px 0 0; padding: 7px 9px; border: 1px solid #d8dee2; border-radius: 8px; font-size: 12px; }
+.nation-service-types label { display: inline-block; margin: 2px 8px 2px 0; }
+#yapcMain { box-sizing: border-box; overflow: auto; padding: clamp(8px, 1vw, 16px); background: #f5f8fa; color: #29485d; }
+.yapc-layout { display: grid; grid-template-columns: minmax(0, 1fr) clamp(190px, 22%, 264px); grid-template-areas: "viewer contents"; gap: 12px; height: 100%; min-height: 440px; }
+.yapc-card { min-width: 0; min-height: 0; padding: 12px; border: 1px solid #d8dee2; border-radius: 12px; background: #fff; }
+.yapc-viewer { grid-area: viewer; display: flex; flex-direction: column; }
+.yapc-contents { grid-area: contents; overflow-y: auto; }
+.yapc-contents summary { padding: 4px 0; color: #003a70; font-size: 16px; font-weight: 800; cursor: pointer; }
+.yapc-contents .guide-links { margin-top: 6px; }
+.yapc-card h2 { margin: 0 0 8px; color: #003a70; line-height: 1.15; }
+.yapc-card p { margin: 0 0 10px; line-height: 1.4; }
+.guide-frame { display: block; flex: 1; width: 100%; min-height: 340px; border: 1px solid #d8dee2; border-radius: 8px; box-sizing: border-box; background: #f5f8fa; }
+.guide-fullscreen { display: none; }
+.guide-service-links { margin: 8px 0; padding-left: 1.25em; }
+.guide-service-links a { color: #003a70; }
+.guide-links a[aria-current="true"] { background: #e7f1f8; font-weight: 750; }
+.guide-page { flex-shrink: 0; color: #466278; font-variant-numeric: tabular-nums; }
+#locationMain .map-popover { box-sizing: border-box; right: 8px; top: 8px; width: min(320px, calc(100% - 16px)); min-width: 0; }
+#locationMain .popover-item { width: 100%; font: inherit; font-size: 13px; color: #003a70; background: transparent; text-align: left; }
+#locationMain .popover-item[aria-pressed="true"] { background: #e7f1f8; font-weight: 750; }
+#locationMain .org-chip { width: 100%; text-align: left; }
+#locationMain .org-chip .name { white-space: normal; overflow-wrap: anywhere; }
+@container (max-width: 740px) {
+  #locationMain .location-left-column { display: block !important; }
+  #locationMain .location-left-column .location-side {
+    margin-top: 16px;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+  #locationMain .location-left-column .location-side > * { max-width: none !important; }
+  #researchMain .research-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@container (max-width: 600px) {
+  .yapc-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "contents" "viewer"; height: auto; min-height: 0; }
+  .yapc-contents { padding-block: 0; }
+  .yapc-contents summary, .yapc-contents .guide-links a { box-sizing: border-box; min-height: 44px; padding-block: 12px; }
+  .guide-frame { flex: none; height: max(420px, 72svh); }
+  .guide-fullscreen { display: flex; align-items: center; align-self: flex-start; min-height: 44px; margin: -4px 0 6px; font-size: 14px; color: #003a70; }
+}
+@container (max-width: 510px) {
+  .local-services { inset: 8px 8px auto auto; padding: 7px 8px; }
+}
+</style>
 </head>
 <body class="professional-wow">
 <input id="startupDismiss" type="checkbox" hidden aria-label="Dismiss introduction">
@@ -5973,23 +6071,72 @@ input[type="radio"] {
 <section aria-label="Yukon First Nations websites" class="sidebar-section nation-panel" hidden id="nationPanel">
 <div class="nation-panel-header"><h3>Talk to your Nation</h3><button aria-label="Close First Nations websites" class="nation-panel-close" id="nationPanelClose" type="button">×</button></div>
 <p class="nation-panel-description">Whether your needs relate to education, employment, housing, justice, sport and recreation, health and wellbeing, or another priority, you can connect with your First Nation through the staff directory or contact provided on their website.</p>
+<a class="nation-guide-link" href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=72" data-guide-page="72">Yukon First Nation Offices in Surviving in the Yukon</a>
+<fieldset class="nation-service-types">
+<legend>Filter programs by service type</legend>
+<label><input type="checkbox" value="Culture and recreation"> Culture and recreation</label>
+<label><input type="checkbox" value="Education"> Education</label>
+<label><input type="checkbox" value="Family support"> Family support</label>
+<label><input type="checkbox" value="Health and wellness"> Health and wellness</label>
+<label><input type="checkbox" value="Housing and shelter"> Housing and shelter</label>
+</fieldset>
+<p id="nationProgramsEmpty" hidden role="status">No programs match the selected service types.</p>
 <div class="nation-links">
 <a href="https://www.ctfn.ca/" target="_blank" rel="noopener noreferrer">Carcross/Tagish First Nation ↗</a>
+<div>
 <a href="https://cafn.ca/" target="_blank" rel="noopener noreferrer">Champagne and Aishihik First Nations ↗</a>
+<details class="nation-programs">
+<summary aria-label="Champagne and Aishihik First Nations programs and spaces">Programs and spaces</summary>
+<ul>
+<li data-service-type="Health and wellness"><a href="https://shawthannazhi.ca/" target="_blank" rel="noopener noreferrer">Shäwthän Näzhì (land-based healing programs)</a></li>
+</ul>
+</details>
+</div>
 <a href="https://dayludenacouncil.com/" target="_blank" rel="noopener noreferrer">Daylu Dena ↗</a>
 <a href="https://www.nndfn.com/" target="_blank" rel="noopener noreferrer">First Nation of Na-Cho Nyäk Dun ↗</a>
 <a href="https://www.gwichintribal.ca/" target="_blank" rel="noopener noreferrer">Gwich'in Tribal Council ↗</a>
 <a href="https://kfn.ca/" target="_blank" rel="noopener noreferrer">Kluane First Nation ↗</a>
+<div>
 <a href="https://www.kwanlindun.com/" target="_blank" rel="noopener noreferrer">Kwanlin Dün First Nation ↗</a>
+<details class="nation-programs">
+<summary aria-label="Kwanlin Dün First Nation programs and spaces">Programs and spaces</summary>
+<ul>
+<li data-service-type="Health and wellness"><a href="https://www.kwanlindun.com/social-wellbeing-and-empowerment/#Social-Wellbeing" target="_blank" rel="noopener noreferrer">Dátä̀y Kų̀ / Dánduha Kų̀ (Uncle’s House, men’s group)</a></li>
+<li data-service-type="Education"><a href="https://www.kwanlindun.com/education/" target="_blank" rel="noopener noreferrer">Kenädän Kų (House of Learning)</a></li>
+<li data-service-type="Health and wellness"><a href="https://www.kwanlindun.com/health/" target="_blank" rel="noopener noreferrer">Natsékhi Kų̀ Health Centre</a></li>
+<li data-service-type="Family support"><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=12" data-guide-page="12">Children and Family Support (Justice Team)</a></li>
+<li data-service-type="Culture and recreation"><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=15" data-guide-page="15">Youth Recreation</a></li>
+</ul>
+</details>
+</div>
 <a href="https://liardfirstnation.ca/" target="_blank" rel="noopener noreferrer">Liard First Nation ↗</a>
 <a href="https://www.lscfn.ca/" target="_blank" rel="noopener noreferrer">Little Salmon/Carmacks First Nation ↗</a>
 <a href="https://www.rrdc.ca/" target="_blank" rel="noopener noreferrer">Ross River Dena Council ↗</a>
 <a href="https://www.selkirkfn.com/" target="_blank" rel="noopener noreferrer">Selkirk First Nation ↗</a>
+<div>
 <a href="https://taan.ca/" target="_blank" rel="noopener noreferrer">Ta’an Kwäch’än Council ↗</a>
+<details class="nation-programs">
+<summary aria-label="Ta’an Kwäch’än Council programs and spaces">Programs and spaces</summary>
+<ul>
+<li data-service-type="Family support"><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=13" data-guide-page="13">Family Support</a></li>
+</ul>
+</details>
+</div>
 <a href="https://tahltan.org/" target="_blank" rel="noopener noreferrer">Tahltan ↗</a>
 <a href="https://trtfn.com/" target="_blank" rel="noopener noreferrer">Taku River Tlingit ↗</a>
 <a href="https://ttc.yt/" target="_blank" rel="noopener noreferrer">Teslin Tlingit Council ↗</a>
+<div>
 <a href="https://www.trondek.ca/" target="_blank" rel="noopener noreferrer">Tr’ondëk Hwëch’in ↗</a>
+<details class="nation-programs">
+<summary aria-label="Tr’ondëk Hwëch’in programs and spaces">Programs and spaces</summary>
+<ul>
+<li data-service-type="Culture and recreation"><a href="https://www.trondek.ca/our-programs-services/heritage/danoja-zho-cultural-centre/" target="_blank" rel="noopener noreferrer">Dänojà Zho Cultural Centre</a></li>
+<li data-service-type="Housing and shelter"><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=68" data-guide-page="68">Jëje Zho (Men’s House, shelter and transitional home)</a></li>
+<li data-service-type="Culture and recreation"><a href="https://www.trondek.ca/venue/kajit-in-zho/" target="_blank" rel="noopener noreferrer">K’äjit-in Zho (youth centre)</a></li>
+<li data-service-type="Family support"><a href="https://www.trondek.ca/our-programs-services/our-families-our-future/" target="_blank" rel="noopener noreferrer">Ni’ehłyat Nidähjì’ (family wellness support)</a></li>
+</ul>
+</details>
+</div>
 <a href="https://www.vgfn.ca/" target="_blank" rel="noopener noreferrer">Vuntut Gwitchin First Nation ↗</a>
 <a href="https://whiteriverfirstnation.com/" target="_blank" rel="noopener noreferrer">White River First Nation ↗</a>
 </div>
@@ -6003,6 +6150,7 @@ input[type="radio"] {
 <button aria-controls="modeLocation" aria-selected="false" class="mode-btn" id="btnLocation" role="tab"><span class="mode-tab-title">Location</span><span class="mode-tab-sub">Communities + services</span></button>
 <button aria-controls="modeAdjacent" aria-selected="false" class="mode-btn" id="btnAdjacent" role="tab"><span class="mode-tab-title">Adjacent Supports</span><span class="mode-tab-sub">Beyond education</span></button>
 <button aria-controls="modeResearch" aria-selected="false" class="mode-btn" id="btnResearch" role="tab"><span class="mode-tab-title">Research on Youth</span><span class="mode-tab-sub">Youth priorities + findings</span></button>
+<button aria-controls="yapcMain" aria-selected="false" class="mode-btn" id="btnYapc" role="tab" type="button"><span class="mode-tab-title">YAPC</span><span class="mode-tab-sub">Surviving in the Yukon</span></button>
 </div>
 <!-- THEME MODE (default) -->
 <div aria-labelledby="btnTheme" class="mode-content active" id="modeTheme" role="tabpanel">
@@ -6143,7 +6291,7 @@ input[type="radio"] {
 <div class="location-main-header">
 <div>
 <div class="location-main-title">Browse by community</div>
-<div class="location-main-sub">Click a dot on the Yukon map or select a community to see organizations in that community alongside available What We Heard youth priorities.</div>
+<div class="location-main-sub">Click a dot on the Yukon map or select a community to see local services, organizations, and available What We Heard youth priorities.</div>
 </div>
 <div class="location-main-actions">
 <button class="mini-btn" id="btnClearCommunityMain" type="button">Clear selection</button>
@@ -6153,11 +6301,15 @@ input[type="radio"] {
 <div class="map-header">
 <div class="map-header-title">Yukon communities</div>
 <div class="map-header-actions">
-<button class="mini-btn" id="btnShowAllCommunities" type="button">Choose</button>
+<button aria-controls="communityChooser" aria-expanded="false" aria-label="Choose a community" class="mini-btn" id="btnShowAllCommunities" type="button">Choose</button>
 </div>
 </div>
 <div aria-label="Yukon map" class="map-area" id="yukonMap">
 <div class="map-overlay"></div>
+<section class="local-services" aria-labelledby="localServicesTitle">
+<h4 id="localServicesTitle">Local Services</h4>
+<div id="localServicesBody" aria-live="polite"><p>Select a community to see its services.</p></div>
+</section>
 <!-- dots injected by JS -->
 </div>
 </div><div class="location-side">
@@ -6275,6 +6427,43 @@ We recognize that this is only a snapshot in time of who exists and what work th
 </div>
 </div>
 </div>
+<section aria-labelledby="btnYapc" class="main-view" id="yapcMain" role="tabpanel" tabindex="0">
+<div class="yapc-layout">
+<nav aria-labelledby="guideContentsTitle" class="yapc-card yapc-contents">
+<details id="guideContentsDisclosure" open>
+<summary id="guideContentsTitle">Guide table of contents</summary>
+<ul class="guide-links">
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=4" data-guide-page="4"><span>Advocacy + Resources</span><span class="guide-page">4</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=10" data-guide-page="10"><span>Children, Youth + Family: Programming + Supports</span><span class="guide-page">10</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=16" data-guide-page="16"><span>Clothing</span><span class="guide-page">16</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=18" data-guide-page="18"><span>Crisis Supports</span><span class="guide-page">18</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=23" data-guide-page="23"><span>Drop-In</span><span class="guide-page">23</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=25" data-guide-page="25"><span>Employment + Education Assistance + Job Boards</span><span class="guide-page">25</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=30" data-guide-page="30"><span>Financial Support</span><span class="guide-page">30</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=35" data-guide-page="35"><span>Food + Meals</span><span class="guide-page">35</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=38" data-guide-page="38"><span>Harm Reduction Supports</span><span class="guide-page">38</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=43" data-guide-page="43"><span>Health + Wellness</span><span class="guide-page">43</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=53" data-guide-page="53"><span>Household Items</span><span class="guide-page">53</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=55" data-guide-page="55"><span>Housing Assistance</span><span class="guide-page">55</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=57" data-guide-page="57"><span>Internet + Computers</span><span class="guide-page">57</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=59" data-guide-page="59"><span>Legal Supports</span><span class="guide-page">59</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=63" data-guide-page="63"><span>Mail</span><span class="guide-page">63</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=64" data-guide-page="64"><span>Public Laundry, Showers + Washrooms</span><span class="guide-page">64</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=67" data-guide-page="67"><span>Shelters + Transitional Housing</span><span class="guide-page">67</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=69" data-guide-page="69"><span>Tax Clinics + Tax Support</span><span class="guide-page">69</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=71" data-guide-page="71"><span>Whitehorse Public Transit</span><span class="guide-page">71</span></a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=72" data-guide-page="72"><span>Yukon First Nation Offices</span><span class="guide-page">72</span></a></li>
+</ul>
+</details>
+</nav>
+<div class="yapc-card yapc-viewer">
+<h2>Surviving in the Yukon</h2>
+<p>A guide to free and low-cost goods and services from the Yukon Anti-Poverty Coalition. Updated October 2025.</p>
+<a id="guideFullscreenLink" class="guide-fullscreen" href="https://yapc.ca/assets/documents/SITY_2025.pdf" target="_blank" rel="noopener noreferrer">Read PDF full screen ↗</a>
+<iframe id="yapcGuideFrame" class="guide-frame" title="Surviving in the Yukon PDF" data-guide-src="https://yapc.ca/assets/documents/SITY_2025.pdf"></iframe>
+</div>
+</div>
+</section>
 </div>
 </div>
 <template id="surveyReferenceQuestions">
@@ -6392,6 +6581,22 @@ const EMPLOYMENT_THEMES = ["Youth employment/training opportunities", "Supportin
 const EMBEDDED_LOADED = {"graphData": {"nodes": [{"id": "DOE: Curriculum and Assessment", "label": "DOE: Curriculum and Assessment", "displayName": "YG: Department of Education: Cirriculumn and Assesment", "definition": "Government of Yukon branch focused on development and assessesment of cirriculumns", "programming": "development and assessesment of cirriculumns", "locations": ["Carcross", "Mayo", "Whitehorse", "Watson Lake", "Carmacks", "Teslin", "Dawson City", "Beaver Creek"], "themes": ["Cultural Programming and/or Workshops", "Educational consulting services", "Health programming", "Providing safe spaces", "Tutoring"]}, {"id": "DOE: First Nation Initiatives", "label": "DOE: First Nation Initiatives", "displayName": "YG: First Nation Initiatives and Student Learning", "definition": "Government of Yukon branch focused on Indigenizing teaching and learning in the school system and overseeing school policy work", "programming": "Have consultants, support locally developed courses, professional development opportunities, questions around credits, assessments, First Nation accreditation policy work", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": ["Counselling/Therapeutic services", "Cultural Programming and/or Workshops", "Educational consulting services", "Health programming", "Pre-Natal and/or pre-K programming", "Providing safe spaces", "Recreational and/or artistic pursuits", "Tutoring", "Youth hires", "Student Advocacy"]}, {"id": "Skookum Jim Friendship Centre", "label": "Skookum Jim Friendship Centre", "displayName": "Skookum Jim", "definition": "NGO with programming and supports around the spiritual, emotional, physical, and mental wellbeing of First Nations peoples", "programming": "Running youth emergency shelter, traditional parenting program, pre-natal program, youth employment centre, women’s legal advocacy, post-secondary funding", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": ["Cultural Programming and/or Workshops", "Health programming", "Pre-Natal and/or pre-K programming", "Providing safe spaces", "Tutoring", "Youth hires", "Recreational and/or artistic pursuits"]}, {"id": "DOE: Early Learning and Child Care", "label": "DOE: Early Learning and Child Care", "displayName": "YG: Department of Education: Early Learning and Child Care", "definition": "Government of Yukon branch that supports and funding around early learning and child care (families and service providers)", "programming": "Licensing early learning and child care programs, inspectors, CDC funder, run the supported child care program, ELCC specialists, ECE career promotion", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Old Crow"], "themes": ["Educational consulting services", "Pre-Natal and/or pre-K programming", "Providing safe spaces"]}, {"id": "YFNED", "label": "YFNED", "displayName": "Yukon First Nation Education Directorate (YFNED)", "definition": "NGO for Advocacy, capacity building, learner supports, and programming to support Indigenous student success", "programming": "Running the Early Years Centre, nutrition program (snacks and lunches) within the schools, land camp and cultural programming led by Elders, math tutoring, trades programming, resource building", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": ["Cultural Programming and/or Workshops", "Educational consulting services", "Health programming", "Providing safe spaces", "Tutoring", "Youth hires", "Student Advocacy"]}, {"id": "Yukon Literacy Coalition", "label": "Yukon Literacy Coalition", "displayName": "Yukon Literacy Coalition", "definition": "NGO focused on Free literacy and essential skills workshops for all ages", "programming": "Running the Family Literacy Centre, physical literacy camp, Youth Project Program, Youth employment project, a food truck, other programming", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": ["Cultural Programming and/or Workshops", "Health programming", "Pre-Natal and/or pre-K programming", "Providing safe spaces", "Recreational and/or artistic pursuits"]}, {"id": "BYTE", "label": "BYTE", "displayName": "Bringing Youth Towards Equality (BYTE)", "definition": "NGO Empowering and promoting youth through a “by youth, for youth” approach", "programming": "Running workshops, engagement activities, roundtables, and doing youth hiring", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": ["Cultural Programming and/or Workshops", "Health programming", "Providing safe spaces", "Youth hires", "Recreational and/or artistic pursuits"]}, {"id": "Boys and Girls Club", "label": "Boys and Girls Club", "displayName": "Boys and Girls Club", "definition": "NGO that provides a safe space and positive developmental programming for children and youth", "programming": "Offer a drop-in space, offer harm reduction training in schools, workshop (safer partying), nutrition program, and running a daycare", "locations": ["Haines Junction", "Burwash Landing", "Whitehorse", "Teslin"], "themes": ["Cultural Programming and/or Workshops", "Health programming", "Pre-Natal and/or pre-K programming", "Providing safe spaces", "Youth hires", "Recreational and/or artistic pursuits"]}, {"id": "Autism Yukon", "label": "Autism Yukon", "displayName": "Autism Yukon", "definition": "NGO for Advocacy, support, education, and collaboration to support an inclusive environment for autistic and neurodivergent individuals", "programming": "Offer a sensory room, helping a child get a diagnosis, sharing resources, and offering programming and events", "locations": ["Whitehorse"], "themes": ["Providing safe spaces"]}, {"id": "CDC", "label": "CDC", "displayName": "Child Development Centre (CDC)", "definition": "NGO providing therapeutic services and supporting children’s development from 0-5 years old", "programming": "Helping with inclusion in childcare centres, therapeutic work, FASD and autism assessments, and referrals (e.g. to pediatricians)", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": ["Counselling/Therapeutic services", "Health programming", "Pre-Natal and/or pre-K programming"]}, {"id": "Inclusion Yukon", "label": "Inclusion Yukon", "displayName": "Inclusion Yukon", "definition": "NGO for Advocacy, education, capacity development, and program support for people with intellectual disabilities", "programming": "Offer advocacy and personal support as well as connections to other resources", "locations": ["Haines Junction", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Dawson City"], "themes": ["Cultural Programming and/or Workshops", "Health programming", "Pre-Natal and/or pre-K programming", "Providing safe spaces", "Recreational and/or artistic pursuits"]}, {"id": "YCAO", "label": "YCAO", "displayName": "Youth and Child Advocate Office (YCAO)", "definition": "Government oversight body that Advocates for children and youth in protecting and being a voice for their rights", "programming": "Advocating for access to public services, writing the Systemic Racism Review, and work related to the SOGI policy in schools", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": ["Student Advocacy"]}, {"id": "FASSY", "label": "FASSY", "displayName": "Fetal Alcohol Syndrome Society Yukon", "definition": "NGO providing Resources, education, and support for those affected by FASD", "programming": "Run a FASD-informed practice workshop, have built a 5-day FASD training program with Yukon University, and have many FASD resources.", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": ["Counselling/Therapeutic services", "Cultural Programming and/or Workshops", "Providing safe spaces", "Recreational and/or artistic pursuits"]}, {"id": "DOE: Post-Secondary and Future Skills", "label": "DOE: Post-Secondary and Future Skills", "displayName": "YG: Department of Education: Post-Secondary and Future Skills (formerly Training Programs)", "definition": "Government of Yukon branch focused on overseeing post-secondary student funding programs, apprenticeship agreements, and funding skills training for employment", "programming": "Funding includes Yukon Grant, Student Training Allowance, and literacy and essential skills funding as well as give presentations on the funding options", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": ["Student Advocacy"]}, {"id": "YASC", "label": "YASC", "displayName": "Yukon Aboriginal Sports Circle", "definition": "NGO focused on increasing Aboriginal participation in sport and recreation and promoting Aboriginal sport, a governing body for Arctic Sports, Dene Games, and Archery", "programming": "Examples of work include running an archery program, plus an introduction to arctic sports in schools with cultural teachings", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": ["Cultural Programming and/or Workshops", "Youth hires", "Recreational and/or artistic pursuits"]}, {"id": "YAEP", "label": "YAEP", "displayName": "Yukon Association of Education Professionals (YAEP)", "definition": "Acts as the “exclusive bargaining agent” on behalf of education professionals and as workplace advocate and in the general cause of quality education in the Yukon", "programming": "Advocating, with examples being around improving the IEP policy, EA certification and community allocation, teacher-hiring incentives, trades in schools, and community-teacher retention.", "locations": ["Whitehorse"], "themes": ["Providing safe spaces", "Student Advocacy"]}, {"id": "Queer Yukon", "label": "Queer Yukon", "displayName": "Queer Yukon", "definition": "NGO that Supports, promotes, and organizes events for the 2SLGBTQIA+ community and allies", "programming": "Hosts local support groups, workshops on how to run safer, more inclusive workspaces and health care, supplies, and have health navigators", "locations": ["Mayo", "Whitehorse", "Watson Lake", "Ross River", "Dawson City"], "themes": ["Counselling/Therapeutic services", "Educational consulting services", "Health programming", "Providing safe spaces", "Recreational and/or artistic pursuits", "Student Advocacy"]}, {"id": "Skills Canada", "label": "Skills Canada", "displayName": "Skills Canada", "definition": "NGO Promoting skilled trades and technologies to youth", "programming": "Activities in schools, tool rentals (supporting teachers to meet curriculum objectives), promote apprenticeship program, and participate in the Territorial Skills Competition", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": ["Cultural Programming and/or Workshops", "Providing safe spaces"]}, {"id": "FNSB", "label": "FNSB", "displayName": "First Nation School Board (FNSB)", "definition": "Board that oversees student-centred, public education through Yukon First Nations’ worldviews in school board schools", "programming": "Yukon First Nations share authority with Government of Yukon to run schools guided by communities and community committees, with tailored programming (e.g. literacy initiatives and language/cultural learning opportunities), lesson delivery, and assessment methodology", "locations": ["Carcross", "Haines Junction", "Burwash Landing", "Whitehorse", "Watson Lake", "Ross River", "Pelly Crossing", "Beaver Creek", "Old Crow"], "themes": ["Providing safe spaces", "Recreational and/or artistic pursuits", "Student Advocacy"]}, {"id": "LDAY Centre for Learning", "label": "LDAY Centre for Learning", "displayName": "LDAY Centre for Learning", "definition": "NGO that supports children, youth, and adults with learning difficulties or disabilities", "programming": "Tutoring service (in person and online) for students falling behind from elementary age and up, focused on core subjects and executive functioning, plus summer programming", "locations": ["Whitehorse", "Watson Lake", "Carmacks", "Dawson City"], "themes": ["Counselling/Therapeutic services", "Educational consulting services", "Tutoring", "Student Advocacy"]}, {"id": "YAC", "label": "YAC", "displayName": "Youth Achievement Centre (YAC)", "definition": "NGO supporting youth aged 13-18, either in justice system or at risk through the Health and Social Services Department", "programming": "Taking academic or trades subjects, in a safe space, plus outdoor recreational programming", "locations": ["Whitehorse"], "themes": ["Cultural Programming and/or Workshops", "Educational consulting services", "Health programming", "Providing safe spaces", "Recreational and/or artistic pursuits", "Tutoring", "Student Advocacy"]}, {"id": "ILC", "label": "ILC", "displayName": "Individual Learning Centre (ILC)", "definition": "An alternative school to support students in meeting their academic goals", "programming": "Cross-enrollment flexible learning, focused on core subjects for high school graduation, both in person and online, one to one support", "locations": ["Haines Junction", "Burwash Landing", "Whitehorse", "Carmacks", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": ["Counselling/Therapeutic services", "Cultural Programming and/or Workshops", "Educational consulting services", "Health programming", "Providing safe spaces", "Recreational and/or artistic pursuits", "Tutoring", "Student Advocacy"]}, {"id": "AVS", "label": "AVS", "displayName": "Aurora Virtual School (AVS)", "definition": "An alternative school to support students in meeting their academic goals", "programming": "In person and online courses that use a “self-paced mastery model” supported by a health and wellness program and a wraparound support that includes staff, family, and guidance counsellors", "locations": ["Haines Junction", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": ["Counselling/Therapeutic services", "Cultural Programming and/or Workshops", "Educational consulting services", "Health programming", "Pre-Natal and/or pre-K programming", "Providing safe spaces", "Recreational and/or artistic pursuits", "Tutoring", "Youth hires", "Student Advocacy"]}, {"id": "ARC Foundation", "label": "ARC Foundation", "displayName": "ARC Foundation", "definition": "NGO focused on fostering “awareness, respect, and capacity through SOGI-inclusive K-12 education.", "programming": "Support the school SOGI leads who advocate for students and provide safe spaces, and offers open hours to educators to connect with them", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": ["Educational consulting services", "Providing safe spaces", "Student Advocacy"]}, {"id": "Victoria Faulkner Women's Centre", "label": "Victoria Faulkner Women's Centre", "displayName": "Victoria Faulkner Women's Centre", "definition": "NGO Supporting women’s safety, health and wellbeing, leadership, and empowerment", "programming": "NextGen Men Program (mental health and toxic masculinity) for youth, sexual health education hub (coordinating school workshops), drop-in centre, community kitchen, prenatal nutrition program, and women’s advocate", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": []}, {"id": "DOE: RISE", "label": "DOE: RISE", "displayName": "YG: Department of Education: Reimagining Inclusive and Special Education (RISE)", "definition": "Government of Yukon branch Focused on supporting the education of Indigenous students, rural students, and students with special needs", "programming": "Re-designing school curriculum, school policies, professional development training, ILP processes, providing family supports", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": []}, {"id": "YU: Youth Moving Mountains", "label": "YU: Youth Moving Mountains", "displayName": "YU: Youth Moving Mountains (STEAM and Trades)", "definition": "STEAM Team (team working under Continuing Studies): Child and youth programming in STEAM / Trades (School): Trades programming", "programming": "STEAM: Day camps, after-school programming, March break programming, trades programming, science fairs. Trades: Trades samplers for youth, pre-apprenticeship programs, apprenticeship programming, dual credit opportunities", "locations": ["Carcross", "Haines Junction", "Mayo", "Burwash Landing", "Whitehorse", "Watson Lake", "Carmacks", "Ross River", "Pelly Crossing", "Teslin", "Dawson City", "Beaver Creek", "Old Crow"], "themes": []}], "links": [{"source": "DOE: Curriculum and Assessment", "target": "DOE: First Nation Initiatives", "value": 4.0}, {"source": "DOE: Curriculum and Assessment", "target": "Skookum Jim Friendship Centre", "value": 1.0}, {"source": "DOE: Curriculum and Assessment", "target": "DOE: Early Learning and Child Care", "value": 2.0}, {"source": "DOE: Curriculum and Assessment", "target": "YFNED", "value": 3.0}, {"source": "DOE: Curriculum and Assessment", "target": "Yukon Literacy Coalition", "value": 1.0}, {"source": "DOE: Curriculum and Assessment", "target": "Boys and Girls Club", "value": 2.0}, {"source": "DOE: Curriculum and Assessment", "target": "CDC", "value": 2.5}, {"source": "DOE: Curriculum and Assessment", "target": "DOE: Post-Secondary and Future Skills", "value": 3.0}, {"source": "DOE: Curriculum and Assessment", "target": "YAEP", "value": 3.0}, {"source": "DOE: Curriculum and Assessment", "target": "FNSB", "value": 2.0}, {"source": "DOE: Curriculum and Assessment", "target": "LDAY Centre for Learning", "value": 1.0}, {"source": "DOE: Curriculum and Assessment", "target": "ILC", "value": 2.0}, {"source": "DOE: Curriculum and Assessment", "target": "AVS", "value": 4.0}, {"source": "DOE: Curriculum and Assessment", "target": "DOE: RISE", "value": 3.25}, {"source": "DOE: Curriculum and Assessment", "target": "YU: Youth Moving Mountains", "value": 2.0}, {"source": "DOE: First Nation Initiatives", "target": "DOE: Early Learning and Child Care", "value": 3.0}, {"source": "DOE: First Nation Initiatives", "target": "YFNED", "value": 4.0}, {"source": "DOE: First Nation Initiatives", "target": "BYTE", "value": 1.0}, {"source": "DOE: First Nation Initiatives", "target": "CDC", "value": 1.0}, {"source": "DOE: First Nation Initiatives", "target": "Inclusion Yukon", "value": 1.0}, {"source": "DOE: First Nation Initiatives", "target": "YCAO", "value": 3.0}, {"source": "DOE: First Nation Initiatives", "target": "DOE: Post-Secondary and Future Skills", "value": 3.0}, {"source": "DOE: First Nation Initiatives", "target": "YASC", "value": 4.0}, {"source": "DOE: First Nation Initiatives", "target": "YAEP", "value": 1.5}, {"source": "DOE: First Nation Initiatives", "target": "FNSB", "value": 4.0}, {"source": "DOE: First Nation Initiatives", "target": "ILC", "value": 1.5}, {"source": "DOE: First Nation Initiatives", "target": "AVS", "value": 3.0}, {"source": "DOE: First Nation Initiatives", "target": "ARC Foundation", "value": 1.0}, {"source": "DOE: First Nation Initiatives", "target": "DOE: RISE", "value": 3.25}, {"source": "Skookum Jim Friendship Centre", "target": "YFNED", "value": 2.0}, {"source": "Skookum Jim Friendship Centre", "target": "Yukon Literacy Coalition", "value": 1.0}, {"source": "Skookum Jim Friendship Centre", "target": "BYTE", "value": 1.0}, {"source": "Skookum Jim Friendship Centre", "target": "Boys and Girls Club", "value": 2.0}, {"source": "Skookum Jim Friendship Centre", "target": "Autism Yukon", "value": 1.5}, {"source": "Skookum Jim Friendship Centre", "target": "CDC", "value": 1.5}, {"source": "Skookum Jim Friendship Centre", "target": "Inclusion Yukon", "value": 2.0}, {"source": "Skookum Jim Friendship Centre", "target": "YCAO", "value": 1.0}, {"source": "Skookum Jim Friendship Centre", "target": "FASSY", "value": 1.0}, {"source": "Skookum Jim Friendship Centre", "target": "DOE: Post-Secondary and Future Skills", "value": 1.0}, {"source": "Skookum Jim Friendship Centre", "target": "YASC", "value": 2.5}, {"source": "Skookum Jim Friendship Centre", "target": "Skills Canada", "value": 2.5}, {"source": "Skookum Jim Friendship Centre", "target": "YAC", "value": 1.0}, {"source": "Skookum Jim Friendship Centre", "target": "ILC", "value": 2.0}, {"source": "Skookum Jim Friendship Centre", "target": "Victoria Faulkner Women's Centre", "value": 2.0}, {"source": "Skookum Jim Friendship Centre", "target": "DOE: RISE", "value": 2.0}, {"source": "DOE: Early Learning and Child Care", "target": "YFNED", "value": 4.0}, {"source": "DOE: Early Learning and Child Care", "target": "Yukon Literacy Coalition", "value": 1.5}, {"source": "DOE: Early Learning and Child Care", "target": "Boys and Girls Club", "value": 3.0}, {"source": "DOE: Early Learning and Child Care", "target": "Autism Yukon", "value": 1.0}, {"source": "DOE: Early Learning and Child Care", "target": "CDC", "value": 4.0}, {"source": "DOE: Early Learning and Child Care", "target": "Inclusion Yukon", "value": 1.0}, {"source": "DOE: Early Learning and Child Care", "target": "DOE: Post-Secondary and Future Skills", "value": 2.0}, {"source": "DOE: Early Learning and Child Care", "target": "FNSB", "value": 1.0}, {"source": "DOE: Early Learning and Child Care", "target": "LDAY Centre for Learning", "value": 1.0}, {"source": "DOE: Early Learning and Child Care", "target": "AVS", "value": 1.0}, {"source": "DOE: Early Learning and Child Care", "target": "Victoria Faulkner Women's Centre", "value": 2.0}, {"source": "DOE: Early Learning and Child Care", "target": "DOE: RISE", "value": 2.25}, {"source": "YFNED", "target": "Yukon Literacy Coalition", "value": 1.5}, {"source": "YFNED", "target": "BYTE", "value": 1.5}, {"source": "YFNED", "target": "Boys and Girls Club", "value": 2.5}, {"source": "YFNED", "target": "Autism Yukon", "value": 1.5}, {"source": "YFNED", "target": "CDC", "value": 3.5}, {"source": "YFNED", "target": "Inclusion Yukon", "value": 1.5}, {"source": "YFNED", "target": "YCAO", "value": 4.0}, {"source": "YFNED", "target": "FASSY", "value": 2.0}, {"source": "YFNED", "target": "DOE: Post-Secondary and Future Skills", "value": 2.5}, {"source": "YFNED", "target": "YASC", "value": 4.0}, {"source": "YFNED", "target": "YAEP", "value": 3.0}, {"source": "YFNED", "target": "Queer Yukon", "value": 1.5}, {"source": "YFNED", "target": "Skills Canada", "value": 3.0}, {"source": "YFNED", "target": "FNSB", "value": 4.0}, {"source": "YFNED", "target": "LDAY Centre for Learning", "value": 1.5}, {"source": "YFNED", "target": "YAC", "value": 2.5}, {"source": "YFNED", "target": "ILC", "value": 3.0}, {"source": "YFNED", "target": "AVS", "value": 2.5}, {"source": "YFNED", "target": "ARC Foundation", "value": 1.5}, {"source": "YFNED", "target": "Victoria Faulkner Women's Centre", "value": 2.0}, {"source": "YFNED", "target": "DOE: RISE", "value": 3.25}, {"source": "YFNED", "target": "YU: Youth Moving Mountains", "value": 3.5}, {"source": "Yukon Literacy Coalition", "target": "BYTE", "value": 1.0}, {"source": "Yukon Literacy Coalition", "target": "Boys and Girls Club", "value": 2.0}, {"source": "Yukon Literacy Coalition", "target": "Autism Yukon", "value": 1.0}, {"source": "Yukon Literacy Coalition", "target": "CDC", "value": 1.5}, {"source": "Yukon Literacy Coalition", "target": "Inclusion Yukon", "value": 2.0}, {"source": "Yukon Literacy Coalition", "target": "FASSY", "value": 1.0}, {"source": "Yukon Literacy Coalition", "target": "YASC", "value": 1.0}, {"source": "Yukon Literacy Coalition", "target": "Skills Canada", "value": 1.0}, {"source": "Yukon Literacy Coalition", "target": "FNSB", "value": 3.0}, {"source": "Yukon Literacy Coalition", "target": "YAC", "value": 1.0}, {"source": "Yukon Literacy Coalition", "target": "ILC", "value": 2.0}, {"source": "Yukon Literacy Coalition", "target": "AVS", "value": 1.0}, {"source": "Yukon Literacy Coalition", "target": "Victoria Faulkner Women's Centre", "value": 1.5}, {"source": "Yukon Literacy Coalition", "target": "DOE: RISE", "value": 2.0}, {"source": "Yukon Literacy Coalition", "target": "YU: Youth Moving Mountains", "value": 2.0}, {"source": "BYTE", "target": "Boys and Girls Club", "value": 3.5}, {"source": "BYTE", "target": "Autism Yukon", "value": 1.0}, {"source": "BYTE", "target": "YCAO", "value": 2.5}, {"source": "BYTE", "target": "FASSY", "value": 1.0}, {"source": "BYTE", "target": "Queer Yukon", "value": 1.0}, {"source": "BYTE", "target": "Skills Canada", "value": 3.5}, {"source": "BYTE", "target": "FNSB", "value": 3.5}, {"source": "BYTE", "target": "YAC", "value": 4.0}, {"source": "BYTE", "target": "ILC", "value": 1.5}, {"source": "BYTE", "target": "AVS", "value": 3.0}, {"source": "BYTE", "target": "Victoria Faulkner Women's Centre", "value": 3.5}, {"source": "BYTE", "target": "DOE: RISE", "value": 1.75}, {"source": "BYTE", "target": "YU: Youth Moving Mountains", "value": 1.0}, {"source": "Boys and Girls Club", "target": "Autism Yukon", "value": 1.0}, {"source": "Boys and Girls Club", "target": "CDC", "value": 4.0}, {"source": "Boys and Girls Club", "target": "Inclusion Yukon", "value": 2.0}, {"source": "Boys and Girls Club", "target": "YCAO", "value": 3.0}, {"source": "Boys and Girls Club", "target": "FASSY", "value": 1.0}, {"source": "Boys and Girls Club", "target": "DOE: Post-Secondary and Future Skills", "value": 3.0}, {"source": "Boys and Girls Club", "target": "YASC", "value": 2.0}, {"source": "Boys and Girls Club", "target": "Queer Yukon", "value": 2.0}, {"source": "Boys and Girls Club", "target": "Skills Canada", "value": 2.5}, {"source": "Boys and Girls Club", "target": "FNSB", "value": 2.5}, {"source": "Boys and Girls Club", "target": "LDAY Centre for Learning", "value": 2.0}, {"source": "Boys and Girls Club", "target": "YAC", "value": 2.5}, {"source": "Boys and Girls Club", "target": "ILC", "value": 2.5}, {"source": "Boys and Girls Club", "target": "Victoria Faulkner Women's Centre", "value": 3.5}, {"source": "Boys and Girls Club", "target": "DOE: RISE", "value": 3.0}, {"source": "Boys and Girls Club", "target": "YU: Youth Moving Mountains", "value": 3.5}, {"source": "Autism Yukon", "target": "CDC", "value": 3.0}, {"source": "Autism Yukon", "target": "Inclusion Yukon", "value": 2.0}, {"source": "Autism Yukon", "target": "YCAO", "value": 1.0}, {"source": "Autism Yukon", "target": "FASSY", "value": 1.0}, {"source": "Autism Yukon", "target": "YAEP", "value": 1.0}, {"source": "Autism Yukon", "target": "FNSB", "value": 2.0}, {"source": "Autism Yukon", "target": "LDAY Centre for Learning", "value": 1.5}, {"source": "Autism Yukon", "target": "Victoria Faulkner Women's Centre", "value": 2.0}, {"source": "Autism Yukon", "target": "DOE: RISE", "value": 1.0}, {"source": "Autism Yukon", "target": "YU: Youth Moving Mountains", "value": 2.0}, {"source": "CDC", "target": "Inclusion Yukon", "value": 1.5}, {"source": "CDC", "target": "YCAO", "value": 2.5}, {"source": "CDC", "target": "FASSY", "value": 2.0}, {"source": "CDC", "target": "YAEP", "value": 1.0}, {"source": "CDC", "target": "Skills Canada", "value": 1.0}, {"source": "CDC", "target": "FNSB", "value": 2.5}, {"source": "CDC", "target": "LDAY Centre for Learning", "value": 1.5}, {"source": "CDC", "target": "AVS", "value": 1.0}, {"source": "CDC", "target": "Victoria Faulkner Women's Centre", "value": 2.5}, {"source": "CDC", "target": "DOE: RISE", "value": 1.5}, {"source": "Inclusion Yukon", "target": "FASSY", "value": 2.0}, {"source": "Inclusion Yukon", "target": "YASC", "value": 1.0}, {"source": "Inclusion Yukon", "target": "Queer Yukon", "value": 2.0}, {"source": "Inclusion Yukon", "target": "Skills Canada", "value": 1.0}, {"source": "Inclusion Yukon", "target": "FNSB", "value": 1.0}, {"source": "Inclusion Yukon", "target": "ILC", "value": 2.0}, {"source": "Inclusion Yukon", "target": "AVS", "value": 1.0}, {"source": "Inclusion Yukon", "target": "Victoria Faulkner Women's Centre", "value": 2.75}, {"source": "Inclusion Yukon", "target": "DOE: RISE", "value": 2.0}, {"source": "Inclusion Yukon", "target": "YU: Youth Moving Mountains", "value": 2.0}, {"source": "YCAO", "target": "FASSY", "value": 1.0}, {"source": "YCAO", "target": "YAEP", "value": 1.5}, {"source": "YCAO", "target": "Queer Yukon", "value": 1.0}, {"source": "YCAO", "target": "FNSB", "value": 3.0}, {"source": "YCAO", "target": "LDAY Centre for Learning", "value": 1.0}, {"source": "YCAO", "target": "YAC", "value": 3.5}, {"source": "YCAO", "target": "ILC", "value": 2.5}, {"source": "YCAO", "target": "AVS", "value": 2.5}, {"source": "YCAO", "target": "ARC Foundation", "value": 2.0}, {"source": "YCAO", "target": "Victoria Faulkner Women's Centre", "value": 1.0}, {"source": "YCAO", "target": "DOE: RISE", "value": 2.75}, {"source": "YCAO", "target": "YU: Youth Moving Mountains", "value": 1.0}, {"source": "FASSY", "target": "YASC", "value": 1.0}, {"source": "FASSY", "target": "FNSB", "value": 1.0}, {"source": "FASSY", "target": "YAC", "value": 1.0}, {"source": "FASSY", "target": "ILC", "value": 1.0}, {"source": "FASSY", "target": "Victoria Faulkner Women's Centre", "value": 1.75}, {"source": "FASSY", "target": "DOE: RISE", "value": 1.5}, {"source": "DOE: Post-Secondary and Future Skills", "target": "YAEP", "value": 1.0}, {"source": "DOE: Post-Secondary and Future Skills", "target": "Skills Canada", "value": 3.5}, {"source": "DOE: Post-Secondary and Future Skills", "target": "ILC", "value": 2.0}, {"source": "DOE: Post-Secondary and Future Skills", "target": "AVS", "value": 2.0}, {"source": "DOE: Post-Secondary and Future Skills", "target": "DOE: RISE", "value": 2.5}, {"source": "DOE: Post-Secondary and Future Skills", "target": "YU: Youth Moving Mountains", "value": 4.0}, {"source": "YASC", "target": "FNSB", "value": 4.0}, {"source": "YASC", "target": "AVS", "value": 1.0}, {"source": "YASC", "target": "DOE: RISE", "value": 2.0}, {"source": "YAEP", "target": "FNSB", "value": 3.5}, {"source": "YAEP", "target": "LDAY Centre for Learning", "value": 1.5}, {"source": "YAEP", "target": "YAC", "value": 3.0}, {"source": "YAEP", "target": "ILC", "value": 1.0}, {"source": "YAEP", "target": "AVS", "value": 1.0}, {"source": "YAEP", "target": "Victoria Faulkner Women's Centre", "value": 2.0}, {"source": "YAEP", "target": "DOE: RISE", "value": 2.0}, {"source": "YAEP", "target": "YU: Youth Moving Mountains", "value": 2.0}, {"source": "Queer Yukon", "target": "FNSB", "value": 1.0}, {"source": "Queer Yukon", "target": "YAC", "value": 2.0}, {"source": "Queer Yukon", "target": "ILC", "value": 2.0}, {"source": "Queer Yukon", "target": "AVS", "value": 2.0}, {"source": "Queer Yukon", "target": "ARC Foundation", "value": 2.0}, {"source": "Queer Yukon", "target": "Victoria Faulkner Women's Centre", "value": 2.0}, {"source": "Queer Yukon", "target": "DOE: RISE", "value": 1.5}, {"source": "Queer Yukon", "target": "YU: Youth Moving Mountains", "value": 1.5}, {"source": "Skills Canada", "target": "FNSB", "value": 3.5}, {"source": "Skills Canada", "target": "LDAY Centre for Learning", "value": 2.0}, {"source": "Skills Canada", "target": "YAC", "value": 1.0}, {"source": "Skills Canada", "target": "ILC", "value": 2.5}, {"source": "Skills Canada", "target": "AVS", "value": 1.0}, {"source": "Skills Canada", "target": "YU: Youth Moving Mountains", "value": 3.75}, {"source": "FNSB", "target": "LDAY Centre for Learning", "value": 1.0}, {"source": "FNSB", "target": "ILC", "value": 1.0}, {"source": "FNSB", "target": "AVS", "value": 4.0}, {"source": "FNSB", "target": "Victoria Faulkner Women's Centre", "value": 2.0}, {"source": "FNSB", "target": "DOE: RISE", "value": 2.5}, {"source": "FNSB", "target": "YU: Youth Moving Mountains", "value": 2.0}, {"source": "LDAY Centre for Learning", "target": "YAC", "value": 1.0}, {"source": "LDAY Centre for Learning", "target": "ILC", "value": 1.0}, {"source": "LDAY Centre for Learning", "target": "AVS", "value": 1.0}, {"source": "LDAY Centre for Learning", "target": "DOE: RISE", "value": 1.5}, {"source": "LDAY Centre for Learning", "target": "YU: Youth Moving Mountains", "value": 2.0}, {"source": "YAC", "target": "ILC", "value": 2.0}, {"source": "YAC", "target": "AVS", "value": 4.0}, {"source": "YAC", "target": "Victoria Faulkner Women's Centre", "value": 1.0}, {"source": "YAC", "target": "DOE: RISE", "value": 2.25}, {"source": "ILC", "target": "AVS", "value": 4.0}, {"source": "ILC", "target": "ARC Foundation", "value": 1.0}, {"source": "ILC", "target": "Victoria Faulkner Women's Centre", "value": 1.0}, {"source": "ILC", "target": "DOE: RISE", "value": 2.0}, {"source": "ILC", "target": "YU: Youth Moving Mountains", "value": 2.0}, {"source": "AVS", "target": "DOE: RISE", "value": 3.25}, {"source": "AVS", "target": "YU: Youth Moving Mountains", "value": 1.0}, {"source": "ARC Foundation", "target": "DOE: RISE", "value": 1.25}, {"source": "Victoria Faulkner Women's Centre", "target": "YU: Youth Moving Mountains", "value": 4.0}, {"source": "DOE: RISE", "target": "YU: Youth Moving Mountains", "value": 2.0}]}, "allLocations": ["Beaver Creek", "Burwash Landing", "Carcross", "Carmacks", "Dawson City", "Haines Junction", "Mayo", "Old Crow", "Pelly Crossing", "Ross River", "Teslin", "Watson Lake", "Whitehorse"], "allThemes": ["Counselling/Therapeutic services", "Cultural Programming and/or Workshops", "Educational consulting services", "Health programming", "Pre-Natal and/or pre-K programming", "Providing safe spaces", "Recreational and/or artistic pursuits", "Student Advocacy", "Tutoring", "Youth hires"], "locationToOrgs": {"Carcross": ["ARC Foundation", "BYTE", "CDC", "DOE: Curriculum and Assessment", "DOE: Early Learning and Child Care", "DOE: First Nation Initiatives", "DOE: Post-Secondary and Future Skills", "DOE: RISE", "FASSY", "FNSB", "Skills Canada", "Skookum Jim Friendship Centre", "Victoria Faulkner Women's Centre", "YASC", "YCAO", "YFNED", "YU: Youth Moving Mountains", "Yukon Literacy Coalition"], "Mayo": ["ARC Foundation", "BYTE", "CDC", "DOE: Curriculum and Assessment", "DOE: Early Learning and Child Care", "DOE: First Nation Initiatives", "DOE: Post-Secondary and Future Skills", "DOE: RISE", "FASSY", "Queer Yukon", "Skills Canada", "Skookum Jim Friendship Centre", "Victoria Faulkner Women's Centre", "YASC", "YCAO", "YFNED", "YU: Youth Moving Mountains", "Yukon Literacy Coalition"], "Whitehorse": ["ARC Foundation", "Autism Yukon", "AVS", "Boys and Girls Club", "BYTE", "CDC", "DOE: Curriculum and Assessment", "DOE: Early Learning and Child Care", "DOE: First Nation Initiatives", "DOE: Post-Secondary and Future Skills", "DOE: RISE", "FASSY", "FNSB", "ILC", "Inclusion Yukon", "LDAY Centre for Learning", "Queer Yukon", "Skills Canada", "Skookum Jim Friendship Centre", "Victoria Faulkner Women's Centre", "YAC", "YAEP", "YASC", "YCAO", "YFNED", "YU: Youth Moving Mountains", "Yukon Literacy Coalition"], "Watson Lake": ["ARC Foundation", "AVS", "BYTE", "CDC", "DOE: Curriculum and Assessment", "DOE: Early Learning and Child Care", "DOE: First Nation Initiatives", "DOE: Post-Secondary and Future Skills", "DOE: RISE", "FASSY", "FNSB", "Inclusion Yukon", "LDAY Centre for Learning", "Queer Yukon", "Skills Canada", "Skookum Jim Friendship Centre", "Victoria Faulkner Women's Centre", "YASC", "YCAO", "YFNED", "YU: Youth Moving Mountains", "Yukon Literacy Coalition"], "Carmacks": ["ARC Foundation", "AVS", "BYTE", "CDC", "DOE: Curriculum and Assessment", "DOE: Early Learning and Child Care", "DOE: First Nation Initiatives", "DOE: Post-Secondary and Future Skills", "DOE: RISE", "FASSY", "ILC", "Inclusion Yukon", "LDAY Centre for Learning", "Skills Canada", "Skookum Jim Friendship Centre", "Victoria Faulkner Women's Centre", "YASC", "YCAO", "YFNED", "YU: Youth Moving Mountains", "Yukon Literacy Coalition"], "Teslin": ["ARC Foundation", "AVS", "Boys and Girls Club", "BYTE", "CDC", "DOE: Curriculum and Assessment", "DOE: Early Learning and Child Care", "DOE: First Nation Initiatives", "DOE: Post-Secondary and Future Skills", "DOE: RISE", "FASSY", "ILC", "Skills Canada", "Skookum Jim Friendship Centre", "Victoria Faulkner Women's Centre", "YASC", "YCAO", "YFNED", "YU: Youth Moving Mountains", "Yukon Literacy Coalition"], "Dawson City": ["ARC Foundation", "AVS", "BYTE", "CDC", "DOE: Curriculum and Assessment", "DOE: Early Learning and Child Care", "DOE: First Nation Initiatives", "DOE: Post-Secondary and Future Skills", "DOE: RISE", "FASSY", "ILC", "Inclusion Yukon", "LDAY Centre for Learning", "Queer Yukon", "Skills Canada", "Skookum Jim Friendship Centre", "Victoria Faulkner Women's Centre", "YASC", "YCAO", "YFNED", "YU: Youth Moving Mountains", "Yukon Literacy Coalition"], "Beaver Creek": ["ARC Foundation", "AVS", "BYTE", "CDC", "DOE: Curriculum and Assessment", "DOE: First Nation Initiatives", "DOE: Post-Secondary and Future Skills", "DOE: RISE", "FASSY", "FNSB", "ILC", "Skills Canada", "Skookum Jim Friendship Centre", "Victoria Faulkner Women's Centre", "YASC", "YCAO", "YFNED", "YU: Youth Moving Mountains", "Yukon Literacy Coalition"], "Haines Junction": ["ARC Foundation", "AVS", "Boys and Girls Club", "BYTE", "CDC", "DOE: Early Learning and Child Care", "DOE: First Nation Initiatives", "DOE: Post-Secondary and Future Skills", "DOE: RISE", "FASSY", "FNSB", "ILC", "Inclusion Yukon", "Skills Canada", "Skookum Jim Friendship Centre", "Victoria Faulkner Women's Centre", "YASC", "YCAO", "YFNED", "YU: Youth Moving Mountains", "Yukon Literacy Coalition"], "Burwash Landing": ["ARC Foundation", "AVS", "Boys and Girls Club", "BYTE", "CDC", "DOE: Early Learning and Child Care", "DOE: First Nation Initiatives", "DOE: Post-Secondary and Future Skills", "DOE: RISE", "FASSY", "FNSB", "ILC", "Skills Canada", "Skookum Jim Friendship Centre", "Victoria Faulkner Women's Centre", "YASC", "YCAO", "YFNED", "YU: Youth Moving Mountains", "Yukon Literacy Coalition"], "Ross River": ["ARC Foundation", "BYTE", "CDC", "DOE: Early Learning and Child Care", "DOE: First Nation Initiatives", "DOE: Post-Secondary and Future Skills", "DOE: RISE", "FASSY", "FNSB", "Inclusion Yukon", "Queer Yukon", "Skills Canada", "Skookum Jim Friendship Centre", "Victoria Faulkner Women's Centre", "YASC", "YCAO", "YFNED", "YU: Youth Moving Mountains", "Yukon Literacy Coalition"], "Pelly Crossing": ["ARC Foundation", "AVS", "BYTE", "CDC", "DOE: Early Learning and Child Care", "DOE: First Nation Initiatives", "DOE: Post-Secondary and Future Skills", "DOE: RISE", "FASSY", "FNSB", "ILC", "Skills Canada", "Skookum Jim Friendship Centre", "Victoria Faulkner Women's Centre", "YASC", "YCAO", "YFNED", "YU: Youth Moving Mountains", "Yukon Literacy Coalition"], "Old Crow": ["ARC Foundation", "AVS", "BYTE", "CDC", "DOE: Early Learning and Child Care", "DOE: First Nation Initiatives", "DOE: Post-Secondary and Future Skills", "DOE: RISE", "FASSY", "FNSB", "ILC", "Skills Canada", "Skookum Jim Friendship Centre", "Victoria Faulkner Women's Centre", "YASC", "YCAO", "YFNED", "YU: Youth Moving Mountains", "Yukon Literacy Coalition"]}};
 
 let graphData = null;
+const localServicesByCommunity = {
+    'Beaver Creek': ['Beaver Creek Health Centre'],
+    'Carcross': ['Carcross Health Centre'],
+    'Carmacks': ['Carmacks Health Centre'],
+    'Dawson City': ['Health Centre (YG)', 'Dawson Women’s Shelter (NGO)', 'Queer Yukon Society (NGO)', 'Victim Services (YG)'],
+    'Destruction Bay': ['Destruction Bay Health Centre'],
+    'Faro': ['Faro Community Health Centre'],
+    'Haines Junction': ['BGCY (NGO)', 'Haines Junction Health Centre (YG)'],
+    'Mayo': ['Mayo Health Centre'],
+    'Old Crow': ['Old Crow Health Centre'],
+    'Pelly Crossing': ['Pelly Crossing Health Centre', 'Youth Centre'],
+    'Ross River': ['Ross River Health Centre'],
+    'Teslin': ['Teslin Health Centre'],
+    'Watson Lake': ['Liard Aboriginal Women’s Society (NGO)', 'Queer Yukon Society (NGO)', 'Victim Services (YG)', 'Watson Lake Health Centre'],
+    'Whitehorse': ['Yukon Anti-Poverty Coalition (NGO)']
+};
 let allLocations = [];
 let locationToOrgs = {};
 const organizationWebsites = {
@@ -6449,7 +6654,8 @@ document.addEventListener('DOMContentLoaded', () => {
   try {
     const loaded = EMBEDDED_LOADED;
     graphData = loaded.graphData;
-    allLocations = loaded.allLocations;
+    allLocations = [...new Set([...loaded.allLocations, ...Object.keys(localServicesByCommunity)])]
+        .sort((a, b) => a.localeCompare(b));
     locationToOrgs = loaded.locationToOrgs;
     populateThemeFilters(loaded.allThemes);
 
@@ -6481,6 +6687,24 @@ const employmentGraphWrap = document.getElementById('employmentGraphWrap');
 const locationMain = document.getElementById('locationMain');
 const adjacentMain = document.getElementById('adjacentMain');
 const researchMain = document.getElementById('researchMain');
+const yapcMain = document.getElementById('yapcMain');
+let guideFrame = document.getElementById('yapcGuideFrame');
+const guideContents = yapcMain.querySelectorAll('.guide-links a');
+const guideDisclosure = document.getElementById('guideContentsDisclosure');
+const guideFullscreenLink = document.getElementById('guideFullscreenLink');
+let compactGuideContents = null;
+
+function syncGuideContentsLayout() {
+    const width = yapcMain.clientWidth;
+    if (!width) return;
+    const compact = width <= 600;
+    if (compact === compactGuideContents) return;
+    compactGuideContents = compact;
+    guideDisclosure.open = !compact;
+}
+
+if (window.ResizeObserver) new ResizeObserver(syncGuideContentsLayout).observe(yapcMain);
+else window.addEventListener('resize', syncGuideContentsLayout);
 const graphLegend = document.getElementById('graphLegend');
 const fundersLegend = document.getElementById('fundersLegend');
 const employmentRecords = EMPLOYMENT_ORGANIZATIONS.map(d => ({...d}));
@@ -6488,7 +6712,7 @@ const employmentById = new Map(employmentRecords.map(d => [d.id, d]));
 const educationById = new Map(graphData.nodes.map(d => [d.id, d]));
 const sharedEmploymentRecords = employmentRecords.filter(d => d.educationId && educationById.has(d.educationId));
 const sharedEducationIds = new Set(sharedEmploymentRecords.map(d => d.educationId));
-const educationEmploymentGateway = {id:'__employment_map_navigation__', label:'Employment Map', isMapNavigation:true, x:120, y:160, moved:false};
+const educationEmploymentGateway = {id:'__employment_map_navigation__', label:'Employment Map', isMapNavigation:true, moved:false};
 let educationBridgeLines = null;
 let educationGatewayNode = null;
 let employmentSvg = null, employmentLayer = null, employmentZoom = null;
@@ -6724,6 +6948,7 @@ const btnTheme = document.getElementById('btnTheme');
 const btnLocation = document.getElementById('btnLocation');
 const btnAdjacent = document.getElementById('btnAdjacent');
 const btnResearch = document.getElementById('btnResearch');
+const btnYapc = document.getElementById('btnYapc');
 const yfnedHome = document.getElementById('yfnedHome');
 const nationMapButton = document.getElementById('nationMapButton');
 const nationPanel = document.getElementById('nationPanel');
@@ -6739,6 +6964,20 @@ const modeTheme = document.getElementById('modeTheme');
 const modeLocation = document.getElementById('modeLocation');
 const modeAdjacent = document.getElementById('modeAdjacent');
 const modeResearch = document.getElementById('modeResearch');
+
+const nationServiceTypes = nationPanel.querySelector('.nation-service-types');
+nationServiceTypes.addEventListener('change', () => {
+    const types = new Set(Array.from(nationServiceTypes.querySelectorAll('input:checked'), input => input.value));
+    let hasPrograms = false;
+    nationPanel.querySelectorAll('.nation-programs').forEach(programs => {
+        programs.querySelectorAll('[data-service-type]').forEach(item => {
+            item.hidden = types.size > 0 && !types.has(item.dataset.serviceType);
+        });
+        programs.hidden = !programs.querySelector('li:not([hidden])');
+        hasPrograms ||= !programs.hidden;
+    });
+    document.getElementById('nationProgramsEmpty').hidden = hasPrograms;
+});
 
 function showNationPanel(open) {
     nationPanel.hidden = !open;
@@ -6761,6 +7000,7 @@ function setMode(mode) {
     const isLocation = mode === 'location';
     const isAdjacent = mode === 'adjacent';
     const isResearch = mode === 'research';
+    const isYapc = mode === 'yapc';
     if (!isTheme) showNationPanel(false);
 
     btnTheme.classList.toggle('active', isTheme);
@@ -6772,6 +7012,8 @@ function setMode(mode) {
     btnLocation.setAttribute('aria-selected', String(isLocation));
     if (btnAdjacent) btnAdjacent.setAttribute('aria-selected', String(isAdjacent));
     if (btnResearch) btnResearch.setAttribute('aria-selected', String(isResearch));
+    btnYapc.classList.toggle('active', isYapc);
+    btnYapc.setAttribute('aria-selected', String(isYapc));
 
     modeTheme.classList.toggle('active', isTheme);
     modeLocation.classList.toggle('active', isLocation);
@@ -6786,6 +7028,11 @@ function setMode(mode) {
     if (locationMain)  locationMain.classList.toggle('active', isLocation);
     if (adjacentMain) adjacentMain.classList.toggle('active', isAdjacent);
     if (researchMain) researchMain.classList.toggle('active', isResearch);
+    yapcMain.classList.toggle('active', isYapc);
+    if (isYapc) {
+        syncGuideContentsLayout();
+        if (!guideFrame.hasAttribute('src')) guideFrame.src = guideFrame.dataset.guideSrc;
+    }
     if (graphLegend) graphLegend.classList.toggle('active', isTheme && currentThemeMap === 'relationships');
     if (fundersLegend) fundersLegend.classList.toggle('active', isTheme && currentThemeMap === 'funders');
 
@@ -6815,6 +7062,35 @@ if (yfnedHome) yfnedHome.addEventListener('click', () => {
 btnLocation.addEventListener('click', () => setMode('location'));
 if (btnAdjacent) btnAdjacent.addEventListener('click', () => setMode('adjacent'));
 if (btnResearch) btnResearch.addEventListener('click', () => setMode('research'));
+btnYapc.addEventListener('click', () => setMode('yapc'));
+document.addEventListener('click', event => {
+    const link = event.target.closest('a[data-guide-page]');
+    if (!link || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    const page = link.dataset.guidePage;
+    const fromGuideContents = yapcMain.contains(link);
+    // A new frame applies the page fragment even after manual scrolling within the PDF.
+    const nextFrame = guideFrame.cloneNode(false);
+    nextFrame.src = `${guideFrame.dataset.guideSrc}#page=${page}`;
+    guideFrame.replaceWith(nextFrame);
+    guideFrame = nextFrame;
+    guideFullscreenLink.href = nextFrame.src;
+    guideContents.forEach(entry => {
+        if (entry === link) entry.setAttribute('aria-current', 'true');
+        else entry.removeAttribute('aria-current');
+    });
+    if (fromGuideContents) {
+        if (compactGuideContents) {
+            guideDisclosure.open = false;
+            guideFrame.focus({preventScroll: true});
+        }
+        guideFrame.scrollIntoView({block: 'nearest'});
+    } else {
+        setMode('yapc');
+        yapcMain.scrollTop = 0;
+        yapcMain.focus();
+    }
+});
 if (btnThemeSeeAdjacent) btnThemeSeeAdjacent.addEventListener('click', () => setMode('adjacent'));
 
 function setThemeMapView(view) {
@@ -6918,6 +7194,15 @@ function isNeighbor(a, b) {
     return adjacency[`${a.id}|${b.id}`] || false;
 }
 
+function placeEducationEmploymentGateway() {
+    if (educationEmploymentGateway.moved) return;
+    const x = width / 2 - Math.min(225, width * .28);
+    const y = height / 2 + Math.min(190, height * .31);
+    Object.assign(educationEmploymentGateway, {x, y, fx: x, fy: y, vx: 0, vy: 0});
+}
+
+placeEducationEmploymentGateway();
+
 // Force simulation
 const simulation = d3.forceSimulation(graphData.nodes.concat([educationEmploymentGateway]))
     .force('link', d3.forceLink(graphData.links)
@@ -6942,6 +7227,8 @@ function resizeThemeGraph(reheat = true) {
     if (phoneLayout.matches && sizeChanged) mobileThemeNeedsFit = true;
     svg.attr('width', width).attr('height', height);
     simulation.force('center', d3.forceCenter(width / 2, height / 2));
+    placeEducationEmploymentGateway();
+    positionEducationBridge();
     if (reheat) {
         simulation.alphaTarget(0.06).restart();
         setTimeout(() => simulation.alphaTarget(0), 120);
@@ -7484,6 +7771,35 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 });
 
+const guideServicesByOrganization = {
+    'Boys and Girls Club': [['Food for Life', 13]],
+    "Victoria Faulkner Women's Centre": [
+        ['Healthy Babies, Healthy Futures', 13],
+        ['Youth Outreach', 15],
+    ],
+    'Yukon Women in Trades and Technology': [['Power Up!', 14]],
+    'Council of Yukon First Nations – Family Preservation Services': [
+        ['Bibia Nàtsät (Strong Babies)', 10],
+        ['Family Preservation Services', 13],
+    ],
+    'YG – HSS': [['Child, Youth and Family Treatment Team (CYFTT)', 47]],
+};
+const guideOrganizationAliases = {
+    'BGC Yukon': 'Boys and Girls Club',
+    'Victoria Faulkner Women’s Centre': "Victoria Faulkner Women's Centre",
+    'Yukon Women in Trades & Technology': 'Yukon Women in Trades and Technology',
+    'YG – Child, Youth, and Family Treatment Team (CYFTT)': 'YG – HSS',
+};
+
+function renderOrganizationGuideLinks(name) {
+    const services = guideServicesByOrganization[guideOrganizationAliases[name] || name];
+    if (!services) return '';
+    const pdf = guideFrame.dataset.guideSrc;
+    return '<ul class="guide-service-links">' + services.map(([label, page]) =>
+        `<li><a href="${pdf}#page=${page}" data-guide-page="${page}" aria-label="${escapeHtml(label)} in Surviving in the Yukon">${escapeHtml(label)}</a></li>`
+    ).join('') + '</ul>';
+}
+
 function updateSelectedNodePanel(d) {
     if (!selectedDisplayNameEl || !selectedDefinitionEl || !selectedProgrammingEl || !selectedWebsiteEl) return;
     if (d && !nationPanel.hidden) showNationPanel(false);
@@ -7503,7 +7819,7 @@ function updateSelectedNodePanel(d) {
     const inventoryItem = getInventorySummaryForNode(d);
     currentInventorySummaryItem = inventoryItem;
     const baseProgramming = d.programming ? `<div>${escapeHtml(d.programming)}</div>` : '';
-    selectedProgrammingEl.innerHTML = baseProgramming + renderInventorySummary(inventoryItem);
+    selectedProgrammingEl.innerHTML = baseProgramming + renderOrganizationGuideLinks(d.id) + renderInventorySummary(inventoryItem);
 
     const website = getWebsiteForNode(d);
     selectedWebsiteEl.innerHTML = website
@@ -7739,6 +8055,7 @@ const yukonCommunityCoords = {
   // West / Alaska border
   "Beaver Creek": { x: 11.0, y: 70 },
   "Burwash Landing": { x: 18.0, y: 77 },
+  "Destruction Bay": { x: 20.0, y: 80.5 },
 
 
   // Central / North-central
@@ -7756,7 +8073,7 @@ const yukonCommunityCoords = {
 
   // Southeast / East
   "Ross River": { x: 46.0, y: 76.0 },
- // "Faro": { x: 43.0, y: 75 },
+  "Faro": { x: 41.5, y: 73.5 },
   "Teslin": { x: 51.0, y: 91 },
   "Watson Lake": { x: 66.0, y: 93 },
 };
@@ -7975,6 +8292,7 @@ function focusNodeById(id) {
     if (!d) return;
 
     applyFocus(d);
+    openMobileDetails(selectedNodePanel);
 
     // Optional: bring node roughly into view (light-touch; keeps user zoom)
     const t = d3.zoomTransform(svg.node());
@@ -7989,75 +8307,51 @@ function focusNodeById(id) {
 }
 
 function closeMapPopover() {
-    if (mapPopoverEl && mapPopoverEl.parentNode) {
-        mapPopoverEl.parentNode.removeChild(mapPopoverEl);
-    }
+    if (!mapPopoverEl) return;
+    mapPopoverEl.remove();
     mapPopoverEl = null;
+    btnShowAllCommunities.setAttribute('aria-expanded', 'false');
 }
 
-function openCommunityChooserPopover(anchorX = 12, anchorY = 12) {
-    closeMapPopover();
-
+function openCommunityChooserPopover() {
     mapPopoverEl = document.createElement('div');
     mapPopoverEl.className = 'map-popover';
-    mapPopoverEl.style.left = `${anchorX}px`;
-    mapPopoverEl.style.top = `${anchorY}px`;
+    mapPopoverEl.id = 'communityChooser';
+    mapPopoverEl.addEventListener('click', event => event.stopPropagation());
+    mapPopoverEl.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+            closeMapPopover();
+            btnShowAllCommunities.focus({preventScroll: true});
+        }
+    });
 
     const title = document.createElement('div');
     title.className = 'map-popover-title';
     title.textContent = 'Choose a community';
     mapPopoverEl.appendChild(title);
 
-    const sub = document.createElement('div');
-    sub.className = 'map-popover-sub';
-    sub.textContent = 'Select one community to filter the network (single-select).';
-    mapPopoverEl.appendChild(sub);
-
     const list = document.createElement('div');
     list.className = 'popover-list';
 
-    // Natural-sort already applied in PHP, but keep stable
-    const locs = Array.isArray(allLocations) ? allLocations.slice() : [];
-    locs.forEach(loc => {
-        const row = document.createElement('label');
+    allLocations.forEach(loc => {
+        const row = document.createElement('button');
+        row.type = 'button';
         row.className = 'popover-item';
-
-        const radio = document.createElement('input');
-        radio.type = 'radio';
-        radio.name = 'communityChoice';
-        radio.value = loc;
-        radio.checked = (loc === selectedCommunity);
-
-        const span = document.createElement('span');
-        span.textContent = loc;
-
-        row.appendChild(radio);
-        row.appendChild(span);
-
-        row.addEventListener('click', (e) => {
-            e.preventDefault();
+        row.textContent = loc;
+        row.setAttribute('aria-pressed', String(loc === selectedCommunity));
+        row.addEventListener('click', () => {
             selectCommunity(loc);
             closeMapPopover();
+            btnShowAllCommunities.focus({preventScroll: true});
         });
-
         list.appendChild(row);
     });
 
     mapPopoverEl.appendChild(list);
-
     yukonMapEl.appendChild(mapPopoverEl);
-
-    // Click-outside to close
-    setTimeout(() => {
-        const onDocClick = (ev) => {
-            if (!mapPopoverEl) return;
-            if (mapPopoverEl.contains(ev.target)) return;
-            if (ev.target === btnShowAllCommunities) return;
-            closeMapPopover();
-            document.removeEventListener('click', onDocClick, true);
-        };
-        document.addEventListener('click', onDocClick, true);
-    }, 0);
+    btnShowAllCommunities.setAttribute('aria-expanded', 'true');
+    const firstChoice = list.querySelector('[aria-pressed="true"]') || list.firstElementChild;
+    firstChoice?.focus({preventScroll: true});
 }
 
 function getFallbackGridCoord(index, total) {
@@ -8090,7 +8384,40 @@ function getCommunityCoord(loc, index, total) {
     return getFallbackGridCoord(index, total);
 }
 
+const localServicesBody = document.getElementById('localServicesBody');
+
+function renderLocalServices(loc) {
+    const services = localServicesByCommunity[loc];
+    const message = document.createElement('p');
+    if (!services) {
+        message.textContent = loc ? `No local services listed for ${loc}.` : 'Select a community to see its services.';
+        localServicesBody.replaceChildren(message);
+        return;
+    }
+
+    message.textContent = loc;
+    const list = document.createElement('ul');
+    services.forEach(name => {
+        const item = document.createElement('li');
+        item.textContent = name;
+        if (loc === 'Whitehorse') {
+            const link = document.createElement('a');
+            link.href = '#btnYapc';
+            link.textContent = name;
+            link.addEventListener('click', event => {
+                event.preventDefault();
+                setMode('yapc');
+                yapcMain.focus();
+            });
+            item.replaceChildren(link, ' · Basic needs programming and advocacy for housing, food and community inclusion.');
+        }
+        list.appendChild(item);
+    });
+    localServicesBody.replaceChildren(message, list);
+}
+
 function updateOrgPanelForCommunity(loc) {
+    renderLocalServices(loc);
     if (!communityMetaEl || !communityOrgListEl) return;
 
     communityOrgListEl.innerHTML = '';
@@ -8104,21 +8431,23 @@ function updateOrgPanelForCommunity(loc) {
     const orgsHere = (locationToOrgs && locationToOrgs[loc]) ? locationToOrgs[loc].slice() : [];
     communityMetaEl.textContent = orgsHere.length
         ? `${loc} — ${orgsHere.length} organization${orgsHere.length === 1 ? '' : 's'}`
-        : `${loc} — No organizations found in MAP_Data_Location.csv for this community.`;
+        : `${loc} — No organizations in the survey inventory.`;
 
     renderWhatHeardForCommunity(loc);
 
     orgsHere.forEach(orgName => {
-        const chip = document.createElement('div');
+        const chip = document.createElement('button');
+        chip.type = 'button';
         chip.className = 'org-chip';
 
-        const name = document.createElement('div');
+        const name = document.createElement('span');
         name.className = 'name';
         name.textContent = orgName;
 
-        const tag = document.createElement('div');
+        const tag = document.createElement('span');
         tag.className = 'tag';
-        tag.textContent = 'Focus';
+        tag.textContent = 'Details';
+        tag.setAttribute('aria-hidden', 'true');
 
         chip.appendChild(name);
         chip.appendChild(tag);
@@ -8185,9 +8514,13 @@ function updateSelectedCommunityInList() {
         const isSel = !!selectedCommunity && loc === selectedCommunity;
         el.classList.toggle('selected', isSel);
 
-        // If the selected item is outside the visible scroll area, bring it into view
+        // Scroll the community list without moving the map out of view.
         if (isSel) {
-            try { el.scrollIntoView({ block: 'nearest' }); } catch(e) {}
+            const listBounds = communityListEl.getBoundingClientRect();
+            const itemBounds = el.getBoundingClientRect();
+            const bottom = listBounds.top + communityListEl.clientTop + communityListEl.clientHeight;
+            if (itemBounds.top < listBounds.top) communityListEl.scrollTop += itemBounds.top - listBounds.top;
+            else if (itemBounds.bottom > bottom) communityListEl.scrollTop += itemBounds.bottom - bottom;
         }
     });
 }
@@ -8242,6 +8575,8 @@ function renderCommunityDots() {
     if (!yukonMapEl) return;
 
     // Remove any existing dots/popovers
+    const focusedCommunity = document.activeElement?.classList.contains('map-dot')
+        ? document.activeElement.dataset.loc : null;
     closeMapPopover();
     yukonMapEl.querySelectorAll('.map-dot').forEach(el => el.remove());
 
@@ -8302,6 +8637,7 @@ function renderCommunityDots() {
         });
 
         yukonMapEl.appendChild(dot);
+        if (loc === focusedCommunity) dot.focus({preventScroll: true});
     });
 
     updateSelectedDot();
@@ -8331,20 +8667,14 @@ if (btnClearCommunity) {
 }
 
 if (btnShowAllCommunities) {
-    btnShowAllCommunities.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        // Place popover near top-right of map shell for consistency
-        const rect = yukonMapEl.getBoundingClientRect();
-        openCommunityChooserPopover(Math.max(10, rect.width - 330), 10);
+    btnShowAllCommunities.addEventListener('click', () => {
+        if (mapPopoverEl) closeMapPopover();
+        else openCommunityChooserPopover();
     });
-}
-
-// Close popover on map click
-if (yukonMapEl) {
-    yukonMapEl.addEventListener('click', () => {
-        closeMapPopover();
+    document.addEventListener('click', event => {
+        if (mapPopoverEl && !mapPopoverEl.contains(event.target) && !btnShowAllCommunities.contains(event.target)) {
+            closeMapPopover();
+        }
     });
 }
 
@@ -8361,7 +8691,7 @@ function onModeChanged(mode) {
     } else if (mode === 'adjacent') {
         closeMapPopover();
         renderAdjacentSupports();
-    } else if (mode === 'research') {
+    } else if (mode === 'research' || mode === 'yapc') {
         closeMapPopover();
     }
 }
@@ -8494,7 +8824,8 @@ function renderAdjacentDetail(item) {
 
     selectedDisplayNameEl.textContent = item.name || 'Adjacent support';
     selectedDefinitionEl.textContent = item.summary || '';
-    selectedProgrammingEl.textContent = item.examples ? `Examples: ${item.examples}` : '';
+    const examples = item.examples ? `<div>Examples: ${escapeHtml(item.examples)}</div>` : '';
+    selectedProgrammingEl.innerHTML = examples + renderOrganizationGuideLinks(item.name);
     selectedWebsiteEl.innerHTML = `<div style="margin-top:8px;"><span style="display:inline-block;font-size:10px;font-weight:900;color:#176b62;background:rgba(23,107,98,0.10);border-radius:999px;padding:4px 8px;letter-spacing:.04em;text-transform:uppercase;">${escapeHtml(item.category || 'Adjacent support')}</span></div>`;
     clearMapDotMembership();
 }
@@ -9470,8 +9801,14 @@ function installEducationBridge() {
             if (!event.active) simulation.alphaTarget(.3).restart();
             d.fx = d.x; d.fy = d.y;
         })
-        .on('drag', dragged)
-        .on('end', dragended));
+        .on('drag', (event, d) => {
+            d.moved = true;
+            dragged(event, d);
+        })
+        .on('end', event => {
+            isDragging = false;
+            if (!event.active) simulation.alphaTarget(0);
+        }));
     updateEducationBridgeVisibility();
     positionEducationBridge();
 }
@@ -9515,8 +9852,8 @@ function showEmploymentDetails(d, openDetails = true) {
     selectedDisplayNameEl.textContent = d.name;
     selectedDefinitionEl.textContent = d.description;
     const note = d.themeOnly ? '<p class="employment-detail-note">Theme-only entry: YFNED is named under \u201cFree food\u201d in the source themes, but does not have a row in the employment organization overview table.</p>' : '';
-    selectedProgrammingEl.innerHTML = note + '<div class="employment-detail-tags">' + d.themes.map(t => '<span>' + escapeHtml(t) + '</span>').join('') + '</div>'
-        ;
+    selectedProgrammingEl.innerHTML = note + renderOrganizationGuideLinks(d.educationId || d.name)
+        + '<div class="employment-detail-tags">' + d.themes.map(t => '<span>' + escapeHtml(t) + '</span>').join('') + '</div>';
     if (d.educationId && educationById.has(d.educationId)) {
         const button = document.createElement('button');
         button.type = 'button';
