@@ -4584,6 +4584,12 @@ input[type="radio"] {
   border-color: var(--bp-line) !important;
 }
 
+#ysporScanTitle {
+  margin-top: 0;
+  background: rgba(230, 172, 206, .4) !important;
+  border-color: #e6acce !important;
+}
+
 .org-chip .tag,
 .community-item .count {
   color: var(--bp-navy) !important;
@@ -4592,9 +4598,12 @@ input[type="radio"] {
 }
 
 .location-what-heard-overview::before,
-.what-heard-panel::before,
-#locationMain #territorialWhatHeardOverview::before {
+.what-heard-panel::before {
   background: var(--bp-red) !important;
+}
+
+#locationMain #territorialWhatHeardOverview::before {
+  background: var(--bp-blue) !important;
 }
 
 /* Mode switch */
@@ -5855,8 +5864,8 @@ input[type="radio"] {
 </style>
 <style id="community-services-and-guide">
 /* Community services and guide navigation */
-#btnYapc { --mode-color: #176b62; }
-#btnYapc.active { color: #124b45 !important; background: #e4f1ed !important; }
+#btnYapc { --mode-color: var(--bp-lime); grid-column: 1 / -1; }
+#btnYapc.active { color: var(--bp-navy) !important; background: color-mix(in srgb, var(--bp-lime) 20%, white) !important; }
 #graph-container { min-width: 0; container-type: inline-size; }
 .guide-links { margin: 0; padding: 0; list-style: none; }
 .guide-links a {
@@ -6105,7 +6114,7 @@ input[type="radio"] {
 <button aria-controls="modeLocation" aria-selected="false" class="mode-btn" id="btnLocation" role="tab"><span class="mode-tab-title">Location</span><span class="mode-tab-sub">Communities + services</span></button>
 <button aria-controls="modeAdjacent" aria-selected="false" class="mode-btn" id="btnAdjacent" role="tab"><span class="mode-tab-title">Adjacent Supports</span><span class="mode-tab-sub">Beyond education</span></button>
 <button aria-controls="modeResearch" aria-selected="false" class="mode-btn" id="btnResearch" role="tab"><span class="mode-tab-title">Research on Youth</span><span class="mode-tab-sub">Youth priorities + findings</span></button>
-<button aria-controls="yapcMain" aria-selected="false" class="mode-btn" id="btnYapc" role="tab" type="button"><span class="mode-tab-title">YAPC</span><span class="mode-tab-sub">Surviving in the Yukon</span></button>
+<button aria-controls="yapcMain" aria-selected="false" class="mode-btn" id="btnYapc" role="tab" type="button"><span class="mode-tab-title">Guide to free and low-cost goods and services</span><span class="mode-tab-sub">Yukon Anti-Poverty Coalition</span></button>
 </div>
 <!-- THEME MODE (default) -->
 <div aria-labelledby="btnTheme" class="mode-content active" id="modeTheme" role="tabpanel">
@@ -6149,12 +6158,19 @@ input[type="radio"] {
 <p class="sidebar-description">
                             Location browsing is shown in the main panel. Select a community from the Yukon map or community list to view its organizations and available youth feedback. Organizations reported the communities they serve through the <button type="button" aria-haspopup="dialog" aria-controls="inventoryModalOverlay" style="display:inline; min-height:0; height:auto; margin:0; border:0; padding:0; background:none; color:#003a70; font:inherit; line-height:inherit; vertical-align:baseline; text-decoration:underline; cursor:pointer;" onclick="window.openSurveyModal()">survey</button>.
                         </p>
+<div id="communityReports">
 <div aria-live="polite" class="what-heard-panel hidden sidebar-what-heard-panel" id="whatHeardPanel">
 <div class="what-heard-eyebrow">What We Heard report</div>
 <h4 class="what-heard-title" id="whatHeardTitle"></h4>
 <div class="what-heard-meta" id="whatHeardMeta"></div>
 <p class="what-heard-summary" id="whatHeardSummary"></p>
 <div class="what-heard-note" id="whatHeardNote"></div>
+</div>
+<section aria-labelledby="ysporScanTitle" aria-live="polite" class="what-heard-panel hidden sidebar-what-heard-panel" id="ysporScanPanel">
+<h4 class="what-heard-eyebrow" id="ysporScanTitle">Yukon Services Scan 2026 (YSPOR)</h4>
+<ul class="what-heard-list" id="ysporScanList"></ul>
+<p class="what-heard-note">Information on localized services kindly shared by the Yukon Strategy for Patient-Oriented Research (YSPOR) in their Yukon Services Scan, 2026.</p>
+</section>
 </div>
 </div>
 </div>
@@ -6539,7 +6555,7 @@ let graphData = null;
 const localServicesByCommunity = {
     'Beaver Creek': ['Beaver Creek Health Centre'],
     'Carcross': ['Carcross Health Centre'],
-    'Carmacks': ['Carmacks Health Centre'],
+    'Carmacks': ['Carmacks Health Centre', 'Carmacks Youth Centre'],
     'Dawson City': ['Health Centre (YG)', 'Dawson Women’s Shelter (NGO)', 'Queer Yukon Society (NGO)', 'Victim Services (YG)'],
     'Haines Junction': ['BGCY (NGO)', 'Haines Junction Health Centre (YG)'],
     'Mayo': ['Mayo Health Centre'],
@@ -6812,8 +6828,9 @@ function installPhoneLayout() {
 
     let legendPhoneLayout;
 
-    const reportAnchor = document.createComment('Original community report position');
-    whatHeardPanelEl.before(reportAnchor);
+    const communityReports = document.getElementById('communityReports');
+    const reportAnchor = document.createComment('Original community reports position');
+    communityReports.before(reportAnchor);
     const themeFilters = document.getElementById('themeFilters');
     let filterDetails = null;
     let priorCollapsed = sidebar.classList.contains('collapsed');
@@ -6842,7 +6859,7 @@ function installPhoneLayout() {
             priorCollapsed = sidebar.classList.contains('collapsed');
             sidebar.classList.add('collapsed');
             const orgPanel = locationMain.querySelector('.org-panel');
-            orgPanel.before(whatHeardPanelEl);
+            orgPanel.before(communityReports);
             filterDetails = document.createElement('details');
             filterDetails.className = 'mobile-theme-filters';
             filterDetails.innerHTML = '<summary>Theme filters</summary>';
@@ -6853,7 +6870,7 @@ function installPhoneLayout() {
             renderMobileDirectory();
         } else if (!isPhone && wasPhone) {
             closeMobileDetails();
-            reportAnchor.after(whatHeardPanelEl);
+            reportAnchor.after(communityReports);
             if (filterDetails) { filterDetails.before(themeFilters); filterDetails.remove(); filterDetails = null; }
             sidebar.classList.toggle('collapsed', priorCollapsed);
             zoom.scaleExtent([1, 2]);
@@ -8184,6 +8201,49 @@ const whatHeardByCommunity = {
     }
 };
 
+const ysporScanPanel = document.getElementById('ysporScanPanel');
+const ysporScanList = document.getElementById('ysporScanList');
+
+const ysporScanByCommunity = {
+    "Beaver Creek": [
+        "No after-school drop in or daycare",
+        "No educational or harm reduction education",
+        "No recreational, life skills or social programming",
+        "Had a request for a family counsellor and play therapy therapist"
+    ],
+    "Burwash Landing": [
+        "Request for recreational and cultural activities",
+        "Youth need help with mental health issues – no one to turn to, ideally have in the school and then in afterschool care – safe and easily accessible supports",
+        "Non-Indigenous kids don’t know where to go for services"
+    ],
+    "Carmacks": [
+        "Youth want to learn skills, e.g. culinary – how to cook for themselves"
+    ],
+    "Dawson City": [
+        "Lack of programming for youth 6-11 (school or summer)"
+    ],
+    "Haines Junction": [
+        "Need for youth employment opportunities",
+        "Flexible employment prep programming with mentorship, meeting youth where they are at, from age 13 (creating good habits at a young age)",
+        "Paid work opportunities for youth",
+        "1-on-1 tutoring"
+    ],
+    "Mayo": [
+        "Anti-bullying programming",
+        "Local capacity challenges for youth programming"
+    ]
+};
+
+function renderYsporScan(loc) {
+    const notes = ysporScanByCommunity[loc] || [];
+    ysporScanList.replaceChildren(...notes.map(note => {
+        const item = document.createElement('li');
+        item.textContent = note;
+        return item;
+    }));
+    ysporScanPanel.classList.toggle('hidden', notes.length === 0);
+}
+
 function renderWhatHeardForCommunity(loc) {
     if (!whatHeardPanelEl || !whatHeardTitleEl || !whatHeardMetaEl || !whatHeardSummaryEl || !whatHeardNoteEl) return;
     const item = loc ? whatHeardByCommunity[loc] : null;
@@ -8357,6 +8417,7 @@ function renderLocalServices(loc) {
 
 function updateOrgPanelForCommunity(loc) {
     renderLocalServices(loc);
+    renderYsporScan(loc);
     if (!communityMetaEl || !communityOrgListEl) return;
 
     communityOrgListEl.innerHTML = '';
