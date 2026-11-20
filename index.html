@@ -5907,8 +5907,6 @@ input[type="radio"] {
 .nation-programs ul { margin: 6px 0; padding-left: 16px; }
 .nation-programs a { font-weight: 600; text-decoration: underline; }
 .nation-guide-link { color: #003a70; font-size: 12px; }
-.nation-service-types { margin: 10px 0 0; padding: 7px 9px; border: 1px solid #d8dee2; border-radius: 8px; font-size: 12px; }
-.nation-service-types label { display: inline-block; margin: 2px 8px 2px 0; }
 #yapcMain { box-sizing: border-box; overflow: auto; padding: clamp(8px, 1vw, 16px); background: #f5f8fa; color: #29485d; }
 .yapc-layout { display: grid; grid-template-columns: minmax(0, 1fr) clamp(190px, 22%, 264px); grid-template-areas: "viewer contents"; gap: 12px; height: 100%; min-height: 440px; }
 .yapc-card { min-width: 0; min-height: 0; padding: 12px; border: 1px solid #d8dee2; border-radius: 12px; background: #fff; }
@@ -6040,15 +6038,6 @@ input[type="radio"] {
 <div class="nation-panel-header"><h3>Talk to your Nation</h3><button aria-label="Close First Nations websites" class="nation-panel-close" id="nationPanelClose" type="button">×</button></div>
 <p class="nation-panel-description">Whether your needs relate to education, employment, housing, justice, sport and recreation, health and wellbeing, or another priority, you can connect with your First Nation through the staff directory or contact provided on their website.</p>
 <a class="nation-guide-link" href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=72" data-guide-page="72">Yukon First Nation Offices in Surviving in the Yukon</a>
-<fieldset class="nation-service-types">
-<legend>Filter programs by service type</legend>
-<label><input type="checkbox" value="Culture and recreation"> Culture and recreation</label>
-<label><input type="checkbox" value="Education"> Education</label>
-<label><input type="checkbox" value="Family support"> Family support</label>
-<label><input type="checkbox" value="Health and wellness"> Health and wellness</label>
-<label><input type="checkbox" value="Housing and shelter"> Housing and shelter</label>
-</fieldset>
-<p id="nationProgramsEmpty" hidden role="status">No programs match the selected service types.</p>
 <div class="nation-links">
 <a href="https://www.ctfn.ca/" target="_blank" rel="noopener noreferrer">Carcross/Tagish First Nation ↗</a>
 <div>
@@ -6056,7 +6045,7 @@ input[type="radio"] {
 <details class="nation-programs">
 <summary aria-label="Champagne and Aishihik First Nations programs and spaces">Programs and spaces</summary>
 <ul>
-<li data-service-type="Health and wellness"><a href="https://shawthannazhi.ca/" target="_blank" rel="noopener noreferrer">Shäwthän Näzhì (land-based healing programs)</a></li>
+<li><a href="https://shawthannazhi.ca/" target="_blank" rel="noopener noreferrer">Shäwthän Näzhì (land-based healing programs)</a></li>
 </ul>
 </details>
 </div>
@@ -6069,11 +6058,11 @@ input[type="radio"] {
 <details class="nation-programs">
 <summary aria-label="Kwanlin Dün First Nation programs and spaces">Programs and spaces</summary>
 <ul>
-<li data-service-type="Health and wellness"><a href="https://www.kwanlindun.com/social-wellbeing-and-empowerment/#Social-Wellbeing" target="_blank" rel="noopener noreferrer">Dátä̀y Kų̀ / Dánduha Kų̀ (Uncle’s House, men’s group)</a></li>
-<li data-service-type="Education"><a href="https://www.kwanlindun.com/education/" target="_blank" rel="noopener noreferrer">Kenädän Kų (House of Learning)</a></li>
-<li data-service-type="Health and wellness"><a href="https://www.kwanlindun.com/health/" target="_blank" rel="noopener noreferrer">Natsékhi Kų̀ Health Centre</a></li>
-<li data-service-type="Family support"><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=12" data-guide-page="12">Children and Family Support (Justice Team)</a></li>
-<li data-service-type="Culture and recreation"><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=15" data-guide-page="15">Youth Recreation</a></li>
+<li><a href="https://www.kwanlindun.com/social-wellbeing-and-empowerment/#Social-Wellbeing" target="_blank" rel="noopener noreferrer">Dátä̀y Kų̀ / Dánduha Kų̀ (Uncle’s House, men’s group)</a></li>
+<li><a href="https://www.kwanlindun.com/education/" target="_blank" rel="noopener noreferrer">Kenädän Kų (House of Learning)</a></li>
+<li><a href="https://www.kwanlindun.com/health/" target="_blank" rel="noopener noreferrer">Natsékhi Kų̀ Health Centre</a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=12" data-guide-page="12">Children and Family Support (Justice Team)</a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=15" data-guide-page="15">Youth Recreation</a></li>
 </ul>
 </details>
 </div>
@@ -6086,7 +6075,7 @@ input[type="radio"] {
 <details class="nation-programs">
 <summary aria-label="Ta’an Kwäch’än Council programs and spaces">Programs and spaces</summary>
 <ul>
-<li data-service-type="Family support"><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=13" data-guide-page="13">Family Support</a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=13" data-guide-page="13">Family Support</a></li>
 </ul>
 </details>
 </div>
@@ -6098,10 +6087,10 @@ input[type="radio"] {
 <details class="nation-programs">
 <summary aria-label="Tr’ondëk Hwëch’in programs and spaces">Programs and spaces</summary>
 <ul>
-<li data-service-type="Culture and recreation"><a href="https://www.trondek.ca/our-programs-services/heritage/danoja-zho-cultural-centre/" target="_blank" rel="noopener noreferrer">Dänojà Zho Cultural Centre</a></li>
-<li data-service-type="Housing and shelter"><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=68" data-guide-page="68">Jëje Zho (Men’s House, shelter and transitional home)</a></li>
-<li data-service-type="Culture and recreation"><a href="https://www.trondek.ca/venue/kajit-in-zho/" target="_blank" rel="noopener noreferrer">K’äjit-in Zho (youth centre)</a></li>
-<li data-service-type="Family support"><a href="https://www.trondek.ca/our-programs-services/our-families-our-future/" target="_blank" rel="noopener noreferrer">Ni’ehłyat Nidähjì’ (family wellness support)</a></li>
+<li><a href="https://www.trondek.ca/our-programs-services/heritage/danoja-zho-cultural-centre/" target="_blank" rel="noopener noreferrer">Dänojà Zho Cultural Centre</a></li>
+<li><a href="https://yapc.ca/assets/documents/SITY_2025.pdf#page=68" data-guide-page="68">Jëje Zho (Men’s House, shelter and transitional home)</a></li>
+<li><a href="https://www.trondek.ca/venue/kajit-in-zho/" target="_blank" rel="noopener noreferrer">K’äjit-in Zho (youth centre)</a></li>
+<li><a href="https://www.trondek.ca/our-programs-services/our-families-our-future/" target="_blank" rel="noopener noreferrer">Ni’ehłyat Nidähjì’ (family wellness support)</a></li>
 </ul>
 </details>
 </div>
@@ -6930,20 +6919,6 @@ const modeTheme = document.getElementById('modeTheme');
 const modeLocation = document.getElementById('modeLocation');
 const modeAdjacent = document.getElementById('modeAdjacent');
 const modeResearch = document.getElementById('modeResearch');
-
-const nationServiceTypes = nationPanel.querySelector('.nation-service-types');
-nationServiceTypes.addEventListener('change', () => {
-    const types = new Set(Array.from(nationServiceTypes.querySelectorAll('input:checked'), input => input.value));
-    let hasPrograms = false;
-    nationPanel.querySelectorAll('.nation-programs').forEach(programs => {
-        programs.querySelectorAll('[data-service-type]').forEach(item => {
-            item.hidden = types.size > 0 && !types.has(item.dataset.serviceType);
-        });
-        programs.hidden = !programs.querySelector('li:not([hidden])');
-        hasPrograms ||= !programs.hidden;
-    });
-    document.getElementById('nationProgramsEmpty').hidden = hasPrograms;
-});
 
 function showNationPanel(open) {
     nationPanel.hidden = !open;
