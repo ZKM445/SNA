@@ -5543,7 +5543,6 @@ input[type="radio"] {
   #mobileDetailsOverlay .selected-displayname { font-size: 16px; }
   #mobileDetailsOverlay a { overflow-wrap: anywhere; }
   #mobileDetailsOverlay .nation-links a { min-height: 44px; font-size: 14px; }
-  #mobileDetailsOverlay .guide-service-links a { display: flex; align-items: center; min-height: 44px; }
   #mobileDetailsOverlay .nation-panel-header,
   #mobileDetailsOverlay #selectedNodePanel > h3 { display: none; }
   #mobileDetailsOverlay .inventory-more-btn { min-height: 44px; }
@@ -5918,8 +5917,7 @@ input[type="radio"] {
 .yapc-card p { margin: 0 0 10px; line-height: 1.4; }
 .guide-frame { display: block; flex: 1; width: 100%; min-height: 340px; border: 1px solid #d8dee2; border-radius: 8px; box-sizing: border-box; background: #f5f8fa; }
 .guide-fullscreen { display: none; }
-.guide-service-links { margin: 8px 0; padding-left: 1.25em; }
-.guide-service-links a { color: #003a70; }
+.guide-service-link { color: #003a70; text-decoration: underline; text-underline-offset: .12em; }
 .guide-links a[aria-current="true"] { background: #e7f1f8; font-weight: 750; }
 .guide-page { flex-shrink: 0; color: #466278; font-variant-numeric: tabular-nums; }
 #locationMain .map-popover { box-sizing: border-box; right: 8px; top: 8px; width: min(320px, calc(100% - 16px)); min-width: 0; }
@@ -7027,6 +7025,7 @@ document.addEventListener('click', event => {
         }
         guideFrame.scrollIntoView({block: 'nearest'});
     } else {
+        window.closeInventoryModal();
         setMode('yapc');
         yapcMain.scrollTop = 0;
         yapcMain.focus();
@@ -7645,13 +7644,9 @@ function renderInventorySummary(item) {
     return `<div class="inventory-summary"><div class="inventory-summary-title"></div><button class="inventory-more-btn" type="button" onclick="openInventoryModal()"><span>More information</span><span aria-hidden="true">→</span></button></div>`;
 }
 
-function formatInventoryModalText(value) {
-    return String(value || '');
-}
-
-function renderInventoryModalSection(title, value) {
+function renderInventoryModalSection(title, value, organization) {
     if (!value) return '';
-    return `<section class="inventory-modal-section"><h4>${escapeHtml(title)}</h4><p>${escapeHtml(formatInventoryModalText(value))}</p></section>`;
+    return `<section class="inventory-modal-section"><h4>${escapeHtml(title)}</h4><p>${renderGuideLinkedText(organization, value)}</p></section>`;
 }
 
 window.openSurveyModal = function openSurveyModal() {
@@ -7676,7 +7671,7 @@ window.openInventoryModal = function openInventoryModal() {
     document.getElementById('inventoryModalClose').setAttribute('aria-label', 'Close organizational summary');
     title.textContent = item.sourceTitle || 'Organizational summary';
     body.innerHTML = [
-        renderInventoryModalSection('Work they do', item.work),
+        renderInventoryModalSection('Work they do', item.work, item.sourceTitle),
         renderInventoryModalSection('Future work / needs', item.future),
         renderInventoryModalSection('Current collaborations', item.collaborations),
         renderInventoryModalSection('Contact', item.contact)
@@ -7720,32 +7715,45 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 const guideServicesByOrganization = {
-    'Boys and Girls Club': [['Food for Life', 13]],
+    'Boys and Girls Club': [[/\b(?:with food|meals|nutrition program)\b/i, 13, 'Food for Life']],
     "Victoria Faulkner Women's Centre": [
-        ['Healthy Babies, Healthy Futures', 13],
-        ['Youth Outreach', 15],
+        [/\b(?:Healthy Babies,? Healthy Futures|prenatal nutrition program)\b/i, 13, 'Healthy Babies, Healthy Futures'],
+        [/\byouth outreach\b/i, 15, 'Youth Outreach'],
     ],
-    'Yukon Women in Trades and Technology': [['Power Up!', 14]],
+    'Yukon Women in Trades and Technology': [[/\b(?:Power Up\b!?|workshops\b)/i, 14, 'Power Up!']],
     'Council of Yukon First Nations – Family Preservation Services': [
-        ['Bibia Nàtsät (Strong Babies)', 10],
-        ['Family Preservation Services', 13],
+        [/Bibia Nàtsät \(Strong Babies\)|\bpre-natal and post-natal program\b/i, 10, 'Bibia Nàtsät (Strong Babies)'],
+        [/\b(?:family support workers|family preservation)\b/i, 13, 'Family Preservation Services'],
     ],
-    'YG – HSS': [['Child, Youth and Family Treatment Team (CYFTT)', 47]],
+    'YG – HSS': [[/\b(?:CYFTT|Treatment and counselling supports)\b/i, 47, 'Child, Youth and Family Treatment Team (CYFTT)']],
 };
 const guideOrganizationAliases = {
     'BGC Yukon': 'Boys and Girls Club',
+    'Boys and Girls Club (BGC)': 'Boys and Girls Club',
     'Victoria Faulkner Women’s Centre': "Victoria Faulkner Women's Centre",
     'Yukon Women in Trades & Technology': 'Yukon Women in Trades and Technology',
+    'Council of Yukon First Nations (CYFN)': 'Council of Yukon First Nations – Family Preservation Services',
     'YG – Child, Youth, and Family Treatment Team (CYFTT)': 'YG – HSS',
 };
 
-function renderOrganizationGuideLinks(name) {
+function renderGuideLinkedText(name, value) {
+    const description = String(value || '');
     const services = guideServicesByOrganization[guideOrganizationAliases[name] || name];
-    if (!services) return '';
+    if (!services) return escapeHtml(description);
+
+    const matches = services.flatMap(([phrase, page, service]) => {
+        const match = phrase.exec(description);
+        return match ? [{start: match.index, phrase: match[0], page, service}] : [];
+    }).sort((a, b) => a.start - b.start);
     const pdf = guideFrame.dataset.guideSrc;
-    return '<ul class="guide-service-links">' + services.map(([label, page]) =>
-        `<li><a href="${pdf}#page=${page}" data-guide-page="${page}" aria-label="${escapeHtml(label)} in Surviving in the Yukon">${escapeHtml(label)}</a></li>`
-    ).join('') + '</ul>';
+    let html = '';
+    let end = 0;
+    for (const {start, phrase, page, service} of matches) {
+        html += escapeHtml(description.slice(end, start));
+        html += `<a class="guide-service-link" href="${pdf}#page=${page}" data-guide-page="${page}" title="${escapeHtml(service)} in Surviving in the Yukon">${escapeHtml(phrase)}</a>`;
+        end = start + phrase.length;
+    }
+    return html + escapeHtml(description.slice(end));
 }
 
 function updateSelectedNodePanel(d) {
@@ -7766,8 +7774,8 @@ function updateSelectedNodePanel(d) {
     selectedDefinitionEl.textContent  = d.definition || '';
     const inventoryItem = getInventorySummaryForNode(d);
     currentInventorySummaryItem = inventoryItem;
-    const baseProgramming = d.programming ? `<div>${escapeHtml(d.programming)}</div>` : '';
-    selectedProgrammingEl.innerHTML = baseProgramming + renderOrganizationGuideLinks(d.id) + renderInventorySummary(inventoryItem);
+    const baseProgramming = d.programming ? `<div>${renderGuideLinkedText(d.id, d.programming)}</div>` : '';
+    selectedProgrammingEl.innerHTML = baseProgramming + renderInventorySummary(inventoryItem);
 
     const website = getWebsiteForNode(d);
     selectedWebsiteEl.innerHTML = website
@@ -8754,9 +8762,8 @@ function renderAdjacentDetail(item) {
     }
 
     selectedDisplayNameEl.textContent = item.name || 'Adjacent support';
-    selectedDefinitionEl.textContent = item.summary || '';
-    const examples = item.examples ? `<div>Examples: ${escapeHtml(item.examples)}</div>` : '';
-    selectedProgrammingEl.innerHTML = examples + renderOrganizationGuideLinks(item.name);
+    selectedDefinitionEl.innerHTML = renderGuideLinkedText(item.name, item.summary);
+    selectedProgrammingEl.innerHTML = item.examples ? `<div>Examples: ${renderGuideLinkedText(item.name, item.examples)}</div>` : '';
     selectedWebsiteEl.innerHTML = `<div style="margin-top:8px;"><span style="display:inline-block;font-size:10px;font-weight:900;color:#176b62;background:rgba(23,107,98,0.10);border-radius:999px;padding:4px 8px;letter-spacing:.04em;text-transform:uppercase;">${escapeHtml(item.category || 'Adjacent support')}</span></div>`;
     clearMapDotMembership();
 }
@@ -9781,10 +9788,10 @@ function showEmploymentDetails(d, openDetails = true) {
     currentInventorySummaryItem = null;
     window.closeInventoryModal();
     selectedDisplayNameEl.textContent = d.name;
-    selectedDefinitionEl.textContent = d.description;
+    selectedDefinitionEl.innerHTML = renderGuideLinkedText(d.educationId || d.name, d.description);
     const note = d.themeOnly ? '<p class="employment-detail-note">Theme-only entry: YFNED is named under \u201cFree food\u201d in the source themes, but does not have a row in the employment organization overview table.</p>' : '';
-    selectedProgrammingEl.innerHTML = note + renderOrganizationGuideLinks(d.educationId || d.name)
-        + '<div class="employment-detail-tags">' + d.themes.map(t => '<span>' + escapeHtml(t) + '</span>').join('') + '</div>';
+    selectedProgrammingEl.innerHTML = note + '<div class="employment-detail-tags">'
+        + d.themes.map(t => '<span>' + escapeHtml(t) + '</span>').join('') + '</div>';
     if (d.educationId && educationById.has(d.educationId)) {
         const button = document.createElement('button');
         button.type = 'button';
